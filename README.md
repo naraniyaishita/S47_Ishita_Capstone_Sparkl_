@@ -24,7 +24,9 @@ Built-in blog: Share your thoughts, experiences, and memories with text and phot
 
 ## Deployed Link:-
 
-Frontend Deployed Link:- [https://sparkl.pages.dev]
+Frontend Deployed Link :- [https://sparkl.pages.dev]
+
+Backend Deployed Link :- [https://sparkl.onrender.com]
 
 ## Daily Plan
 
