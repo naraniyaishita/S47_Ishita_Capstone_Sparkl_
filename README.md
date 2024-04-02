@@ -22,6 +22,10 @@ Watchlist manager: Keep track of movies and series you want to watch.
 
 Built-in blog: Share your thoughts, experiences, and memories with text and photos.
 
+## Deployed Link:-
+
+Frontend Deployed Link:- [https://sparkl.pages.dev]
+
 ## Daily Plan
 
 Day 1:- Intialising GitHub Repository, adding README file for a brief introduction to the Project.
