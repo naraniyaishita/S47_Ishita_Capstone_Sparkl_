@@ -12,7 +12,7 @@ const bookSchema = new mongoose.Schema({
     },
     author: String,
     coverImageURL: String,
-    genres: Array,
+    genres: [String],
     wantTo: {
         type: String,
         enum: ["read", "already", "reading"],
