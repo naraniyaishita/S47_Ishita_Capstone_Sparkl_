@@ -1,0 +1,67 @@
+:root{
+    --WelcomePageFont: "Kode Mono", monospace;
+    --shadow: 6px 6px 6px rgba(69, 69, 69, 0.4);
+    --color : navy;
+}
+.WelcomePage {
+    text-align: center;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 8%;
+    font-family: var(--WelcomePageFont);
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+}
+
+.WelcomePage p {
+    color: var(--color);
+    font-size: 1.8rem;
+    padding: 3%;
+    width: 70vw;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+
+    border: 2px double rgb(96, 96, 96);
+    border-radius: 7px;
+    box-shadow: var(--shadow);
+}
+
+.WelcomePage button {
+    background-color: var(--color);
+    color: white;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    margin: 20px;
+    box-shadow: var(--shadow);
+}
+
+.WelcomePage button:hover {
+
+    color: #f2f2f2;
+    box-shadow: var(--shadow);
+    border: 2px solid #fff;
+    background: linear-gradient(to bottom, rgb(0, 0, 53), rgb(0, 0, 78));
+    transform: scale(1.01);
+
+}
+
+.appName {
+
+    font-family: "Dancing Script", cursive;
+    font-optical-sizing: auto;
+    font-weight: bold;
+    font-style: normal;
+    font-size: 3rem;
+}
+
+
+@media (max-width: 768px) {
+    .WelcomePage p {
+        width: 90vw;
+    }
+}
