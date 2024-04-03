@@ -33,4 +33,5 @@ Backend Deployed Link :- [https://sparkl.onrender.com]
 1. Intialising GitHub Repository, adding README file for a brief introduction to the Project.
 2. Intialising Backend and Frontend.
 3. Deploying Backend and Frontend.
-4. Establishing connection with Database and creating database schema. 
+4. Establishing connection with Database and creating database schema.  
+5. Creating Landing page.  
