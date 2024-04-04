@@ -35,3 +35,4 @@ Backend Deployed Link :- [https://sparkl.onrender.com]
 3. Deploying Backend and Frontend.
 4. Establishing connection with Database and creating database schema.  
 5. Creating Landing page.  
+6. Creating Registrartion and Login Page.  

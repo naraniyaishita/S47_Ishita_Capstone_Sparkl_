@@ -1,7 +1,9 @@
 import React from 'react'
+import {useNavigate} from "react-router-dom"
 import './Styles/Welcome.css'
 
 function WelcomePage() {
+  const navigate = useNavigate()
   return (
     <div className='WelcomePage'>
     <p>
@@ -11,7 +13,7 @@ function WelcomePage() {
       <br />
       entertainment preferences, and personal expressions in one centralized hub.
     </p>
-    <button>Get Started ⭐ </button>
+    <button onClick={() => navigate('/register')}>Get Started ⭐ </button>
   </div>
   )
 }

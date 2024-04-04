@@ -1,0 +1,95 @@
+.RegisterPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    padding: 20px;
+
+}
+
+.RegisterPage h3 {
+    font-family: "Dancing Script", cursive;
+    font-size: 3.5rem;
+    margin: 1rem;
+    padding: 0.5rem 0;
+    color: rgb(0, 0, 95);
+    
+}
+
+.RegisterForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.432);
+}
+
+.RegisterForm label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: "Kode Mono", monospace;
+    margin: 5px;
+}
+
+.RegisterForm input {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    font-style: italic;
+}
+.RegisterForm input::placeholder {
+    color: #333;
+    font-size: 14px;
+}
+
+.RegisterForm button {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(to bottom, rgb(0, 0, 48), rgb(0, 0, 95));   
+    color: white;
+    border: 1px solid rgb(255, 255, 255);
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    box-shadow: 6px 6px 6px  rgba(69, 69, 69, 0.4);
+    transition: .2s ease-out;
+}
+
+.RegisterForm input:focus {
+    outline: none;
+    border-color: navy;
+}
+
+.RegisterForm button:hover {
+    color: #f2f2f2; 
+    box-shadow: 6px 6px 6px  rgba(69, 69, 69, 0.4);
+    background: linear-gradient(to bottom, rgb(0, 0, 41), rgb(0, 0, 95));
+    transform: scale(1.01);
+    
+}
+
+.googleBtn {
+    height: 40px;
+}
+
+.RegisterForm p {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.loginBtn {
+    margin-top: 10px;
+}
