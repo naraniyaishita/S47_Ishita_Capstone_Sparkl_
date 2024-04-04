@@ -25,10 +25,8 @@ function RegistrationPage() {
         <button type='submit' onClick={() => navigate('/login ')}>Register</button>
       </div>
       <div>
-
         <p>Already have an account?
           <button className='loginBtn' onClick={() => navigate('/login')}>Login</button></p>
-
       </div>
 
     </form>

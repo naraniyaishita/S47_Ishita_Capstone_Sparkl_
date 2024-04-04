@@ -82,8 +82,12 @@
 }
 
 .RegisterForm p {
-    margin-top: 10px;
+    margin-top: 5px;
     text-align: center;
+}
+
+.RegisterForm p button{
+    margin-top: 8px;
 }
 
 .loginBtn {
