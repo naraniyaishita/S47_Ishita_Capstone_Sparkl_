@@ -1,7 +1,9 @@
 import React from 'react'
 import "../Styles/Register.css"
+import { useNavigate } from 'react-router-dom'
 
 function RegistrationPage() {
+  const navigate = useNavigate()
   return (
     <div className='RegisterPage'>
     <h3>Welcome to Sparkl</h3>
