@@ -37,3 +37,4 @@ Backend Deployed Link :- [https://sparkl.onrender.com]
 5. Creating Landing page.  
 6. Creating Registrartion and Login Page.  
 7. Creating Home page and Navbar.  
+8. Get API created.  
