@@ -24,9 +24,6 @@ mongoose
     console.error("Error connecting to MongoDB:", err);
   });
 
-app.get("/", (req, res) => {
-  res.send("Welcome to the Sparkl Server");
-});
 app.get("/user", (req, res) => {
   UserModal.find({})
     .then((users) => res.json(users))
