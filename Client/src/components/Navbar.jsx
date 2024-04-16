@@ -12,10 +12,10 @@ function Navbar() {
         <span className='app'>Sparkl  </span>
       </div>
       <div className='linkButton' role='menubar'>
-        <button role='menuitem'> Home</button>
-        <button role='menuitem'> Bookshelf</button>
-        <button role='menuitem'> Watchlist</button>
-        <button role='menuitem'> Blogs</button>
+        <button role='menuitem' onClick={() => navigate('/home')}> Home</button>
+        <button role='menuitem' onClick={() => navigate('/bookshelf')}> Bookshelf</button>
+        <button role='menuitem' onClick={() => navigate('/watchlist')}> Watchlist</button>
+        <button role='menuitem' onClick={() => navigate('/blogs')}> Blogs</button>
         <button role='menuitem'> Profile</button>
       </div>
     </nav>
