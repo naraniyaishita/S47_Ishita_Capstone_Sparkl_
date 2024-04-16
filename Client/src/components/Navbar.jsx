@@ -2,21 +2,28 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Styles/Nav.css'
 
+const pages = [
+  { name: "Home", path: "/home" },
+  { name: "Bookshelf", path: "/bookshelf" },
+  { name: "Watchlist", path: "/watchlist" },
+  { name: "Blogs", path: "/blogs" },
+  { name: "Profile", path: "/home" }, 
+];
 
 function Navbar() {
   const navigate = useNavigate();
-  
+
   return (
     <nav className='nav' role='navigation' aria-label='Main Navigation'>
       <div className='logo' onClick={() => navigate('/home')} role='button'>
-        <span className='app'>Sparkl  </span>
+        <span className='app'>Sparkl  </span>
       </div>
       <div className='linkButton' role='menubar'>
-        <button role='menuitem'> Home</button>
-        <button role='menuitem'> Bookshelf</button>
-        <button role='menuitem'> Watchlist</button>
-        <button role='menuitem'> Blogs</button>
-        <button role='menuitem'> Profile</button>
+        {pages.map((page) => (
+          <button key={page.path} role="menuitem" onClick={() => navigate(page.path)}>
+            {page.name}
+          </button>
+        ))}
       </div>
     </nav>
   );
