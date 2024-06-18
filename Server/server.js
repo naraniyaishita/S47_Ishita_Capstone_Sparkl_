@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 
 import UserRoute from './Routes/User.js'
 import BookRoute from './Routes/Books.js'
@@ -10,6 +11,10 @@ import WatchListRoute from './Routes/Watchlist.js'
 
 dotenv.config();
 const app = express();
+
+app.use(express.json());
+app.use(cors());
+
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Sparkl Server!");

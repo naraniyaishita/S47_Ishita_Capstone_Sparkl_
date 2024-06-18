@@ -9,5 +9,11 @@ router.get("/", (req, res) => {
       .catch((err) => res.json(err));
   });
 
+
+  router.post("/", (req, res) => {
+    WatchListModal.create(req.body)
+      .then((item) => res.json(item))
+      .catch((err) => res.status(400).json(err));
+  });
   export default router
   
