@@ -14,7 +14,6 @@ router.get("/", (req, res) => {
     WatchListModal.create(req.body)
       .then((item) => res.json(item))
       .catch((err) => res.status(400).json(err));
-    console.log(req.body);
   });
   export default router
   

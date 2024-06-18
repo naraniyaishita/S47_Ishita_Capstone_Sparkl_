@@ -1,0 +1,25 @@
+meta {
+  name: Post Watchlist
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:2004/watchlist
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "Stranger Things",
+  "type": "TV Series",
+  "coverImageURL": "https://upload.wikimedia.org/wikipedia/en/7/78/Stranger_Things_season_4.jpg",
+  "genre": [
+  "Super Natural"
+  ],
+  "wantTo": "watch",
+  "whereTo": "Netflix",
+  "fav": true
+  }
+}

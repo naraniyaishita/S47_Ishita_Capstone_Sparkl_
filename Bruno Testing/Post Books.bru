@@ -1,0 +1,24 @@
+meta {
+  name: Post Books
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:2004/books
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "HTML",
+  "author": "Wendy Willard",
+  "coverImageURL": "https://covers.openlibrary.org/b/id/61408-M.jpg",
+  "genres": [
+  "HTML"
+  ],
+  "wantTo": "already",
+  "fav": false
+  }
+}
