@@ -4,7 +4,7 @@
 
 Introducing "Sparkl" the all-in-one app designed to simplify your digital lifestyle. Sparkl is your haven for digital organization, seamlessly bringing together your favorite applications, entertainment preferences, and personal expressions in one centralized hub.
 
-With Sparkl, you can effortlessly curate a collection of your most-used applications like Spotify and YouTube, ensuring quick and convenient access to your digital essentials.  
+With Sparkl, you can effortlessly curate a collection of your most-used applications like Spotify, ensuring quick and convenient access to your digital essentials.  
 
 The app takes it a step further by allowing you to create a virtual bookshelf for your reading list and a watchlist for movies or series you can't wait to explore.
 
