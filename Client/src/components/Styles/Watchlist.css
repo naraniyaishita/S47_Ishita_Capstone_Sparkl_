@@ -13,14 +13,12 @@
     text-shadow: 1px 2px 2px rgb(101, 101, 101);
 }
 .watchList{
-    /* border: 1px solid grey; */
     width: 90vw;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 10px;
     margin-left: auto;
     margin-right: auto;
-    /* background-color: #00000048;    */
     border-radius: 20px;
 }
 .watchItemImg{
@@ -28,7 +26,6 @@
     border-radius: 10px;
 }
 .watchItem{
-    /* border: 1px solid black; */
     margin: 1rem;
     padding: .7rem;
     border-radius: 20px;
@@ -61,7 +58,6 @@
     font-weight: 500;
 }
 .watchWhere{
-    /* font-style: italic; */
     font-size : 1.2rem;
     font-weight: 600;
 }
@@ -92,7 +88,6 @@
 .where-to{
     border: 1px solid black;
     height: 1.5rem;
-    /* width: 4rem; */
     background-color: white;
 
 }
