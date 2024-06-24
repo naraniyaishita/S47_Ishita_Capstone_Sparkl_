@@ -24,8 +24,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 router.post("/", upload.array("photos", 12), async (req, res) => {
-  console.log("req.body",req.body);
-  console.log("req.files",req.files);
   if (!req.files || req.files.length === 0) {
     return res.status(400).json({ message: "No files were uploaded." });
   }
@@ -33,7 +31,6 @@ router.post("/", upload.array("photos", 12), async (req, res) => {
     const uploadPromises = req.files.map((file) => UploadonCloudinary(file.path));
     const uploadResults = await Promise.all(uploadPromises);
     const imagepaths = uploadResults.map((result) => result.secure_url);
-
     const {userId,title,content,tags, createdDate, updatedDate } = req.body;
 
     
@@ -49,7 +46,6 @@ router.post("/", upload.array("photos", 12), async (req, res) => {
     await blogdata.save();
     res.status(200).json(blogdata);
   } catch (error) {
-    console.log(error);
     res.status(400).json(error);
   }
 });
