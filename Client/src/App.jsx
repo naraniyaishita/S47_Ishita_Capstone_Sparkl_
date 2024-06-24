@@ -9,6 +9,7 @@ import HomePage from './components/HomePage';
 import Blogs from './components/Pages/Blogs';
 import Bookshelf from './components/Pages/Bookshelf';
 import Watchlist from './components/Pages/Watchlist';
+import Blog from './components/Pages/Blog';
 
 const routes = [
   { path: '/', element: <WelcomePage /> },
@@ -16,6 +17,7 @@ const routes = [
   { path: '/login', element: <LoginPage /> },
   { path: '/home', element: <HomePage /> },
   { path: '/blogs', element: <Blogs /> },
+  { path: "/blogs/:id", element: <Blog /> },
   { path: '/bookshelf', element: <Bookshelf /> },
   { path: '/watchlist', element: <Watchlist /> },
 
