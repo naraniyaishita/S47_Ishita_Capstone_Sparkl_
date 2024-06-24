@@ -35,7 +35,6 @@ router.post("/", upload.array("photos", 12), async (req, res) => {
     const imagepaths = uploadResults.map((result) => result.secure_url);
 
     const {userId,title,content,tags, createdDate, updatedDate } = req.body;
-    const date = moment(new Date()).format("YYYY-MM-DD");
 
     
     const blogdata = new BlogModal({
