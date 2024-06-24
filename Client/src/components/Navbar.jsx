@@ -20,7 +20,7 @@ function Navbar() {
       </div>
       <div className='linkButton' role='menubar'>
         {pages.map((page) => (
-          <button key={page.path} role="menuitem" onClick={() => navigate(page.path)}>
+          <button key={page.name} role="menuitem" onClick={() => navigate(page.path)}>
             {page.name}
           </button>
         ))}
