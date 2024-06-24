@@ -1,9 +1,31 @@
 .blog-image{
     max-height: 60vh;
+    width: 50vw;
     margin: .1rem;
 }
 .Blog{
     border: 1px solid black;
     margin: 5rem;
     text-align: center;
+}
+.Blog button{
+    border: 1px solid black;
+    height: 1.5rem;
+    width: 4rem;
+    background-color: white;
+    margin: 1rem;
+    color: black;
+    /* display:flex ; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    cursor: pointer;
+}
+.blog-top{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    
+}
+.blog-content{
+    margin: 1rem;
 }

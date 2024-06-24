@@ -10,7 +10,33 @@
 .blogImage{
     height: 30vh;
     margin: .5rem;
+    width: 35vw;
 }
 .blogContent{
     margin: .5rem;
+}
+.addBlog{
+    border: 1px solid black;
+    height: 1.5rem;
+    width: 4rem;
+    background-color: white;
+    margin: 1rem;
+    color: black;
+    display:flex ;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    
+}
+.BlogTopDiv{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.BlogTopDiv h2{
+    margin: 1rem;
+    font-family: var(--font-style-one);
+    color: var(--font-color-one);
+    font-weight: 800;
+    font-size: 3rem;
 }
