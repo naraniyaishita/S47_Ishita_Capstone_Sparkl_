@@ -27,7 +27,7 @@ function BlogsPage() {
     <Navbar/>
     <div className='BlogTopDiv'>
     <h2>Your Blogs</h2>
-    <button className='addBlog'>ADD</button>
+    <button className='addBlog' onClick={() => navigate('/blogs/add')}>ADD</button>
     </div>
 
     
@@ -35,7 +35,6 @@ function BlogsPage() {
       {Blogs.map((blog, index) => (
         
         <div key={index} className="blog" onClick={() => navigate(`/blogs/${blog._id}`)}>
-          {console.log(blog)}
           <div className='blogImages'>
             {blog.imagepath && <img src={blog.imagepath[0]} alt="" className='blogImage'/>}
       
