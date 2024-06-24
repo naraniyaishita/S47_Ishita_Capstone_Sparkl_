@@ -25,9 +25,12 @@ function BlogsPage() {
   return (
     <>
     <Navbar/>
-    <button>ADD</button>
-
+    <div className='BlogTopDiv'>
     <h2>Your Blogs</h2>
+    <button className='addBlog'>ADD</button>
+    </div>
+
+    
     <div className="blogs-container">
       {Blogs.map((blog, index) => (
         

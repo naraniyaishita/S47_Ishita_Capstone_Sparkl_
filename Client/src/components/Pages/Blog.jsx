@@ -34,12 +34,15 @@ function Blog() {
 
     return (
         <div className='Blog'>
+            <div className='blog-top'>
+
             <button onClick={()=>navigate('/blogs')} >Back</button>
-            <button onClick={() => handleDelete(blog1._id)}>Delete</button>
             <h2> {blog1.title}</h2>
+            <button onClick={() => handleDelete(blog1._id)}>Delete</button>
+            </div>
 
             
-            <p>{blog1.content}</p>
+            <p className='blog-content'>{blog1.content}</p>
             <p>Tags: {blog1.tags.join(', ')}</p>
             <p>Created Date: {formatDate(blog1.createdDate)}</p>
             <p>Updated Date: {formatDate(blog1.updatedDate)}</p>
