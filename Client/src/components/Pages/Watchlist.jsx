@@ -49,7 +49,7 @@ function Watchlist() {
           onChange={handleSearchInputChange}
           placeholder="Search..."
         />
-        <button className="add">
+        <button className="add" onClick={() => navigate("/watchlist/add")}>
          + ADD
         </button>
         <select
