@@ -25,7 +25,7 @@ function BookShelf() {
       <Navbar />
 
       <h2 className="shelfTitle">
-        <button className="AddBtn">
+        <button className="AddBtn"  onClick={() => navigate('/books/add')}>
           {" "}
           + ADD BOOK{" "}
         </button>

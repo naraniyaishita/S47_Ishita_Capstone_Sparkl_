@@ -12,6 +12,8 @@ import Watchlist from './components/Pages/Watchlist';
 import Blog from './components/Pages/Blog';
 
 import AddBlog from './components/Pages/AddBlog';
+import AddBook from './components/Pages/AddBook';
+import AddBookForm from './components/Pages/AddBookForm';
 
 const routes = [
   { path: '/', element: <WelcomePage /> },
@@ -23,6 +25,9 @@ const routes = [
   { path: '/bookshelf', element: <Bookshelf /> },
   { path: '/watchlist', element: <Watchlist /> },
   { path: "/blogs/add", element: <AddBlog /> },
+  { path: "/books/add", element: <AddBook /> },
+  { path: "/books/add/form", element: <AddBookForm /> },
+
 
 
 ];
