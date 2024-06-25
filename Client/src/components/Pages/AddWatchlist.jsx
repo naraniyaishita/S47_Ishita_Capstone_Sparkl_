@@ -11,22 +11,17 @@ function AddWatch() {
   const [page, setPage] = useState(1);
   const [noResult, setNoResult] = useState(false);
 
-  const options = {
-    method: "GET",
-    url: `https://www.omdbapi.com/?s=${searchTerm}&t=${searchTerm}&apikey=3cb6abaf&page=${page}`,
-  };
-
   const handleSearch = async (e) => {
     e.preventDefault();
+    setPage(1);  
     try {
       setSearchResult([]);
-      const response = await axios.request(options);
+      const response = await axios.get(`https://www.omdbapi.com/?s=${searchTerm}&t=${searchTerm}&apikey=3cb6abaf&page=1`);
       if (response.data.Response === "True") {
         setNoResult(false);
         const newResults = response.data.Search || [];
-        setSearchResult((prevResults) => [...prevResults, ...newResults]);
+        setSearchResult(newResults);
         console.log(response.data);
-        console.log(searchResult);
       } else {
         console.log("No results found");
         setNoResult(true);
@@ -37,12 +32,16 @@ function AddWatch() {
   };
 
   const handleLoadMore = async () => {
-    setPage(page + 1);
-    const response = await axios.request(options);
-    const newResults = response.data.Search || [];
-    setSearchResult((prevResults) => [...prevResults, ...newResults]);
-    console.log(response.data);
-    console.log(searchResult);
+    const newPage = page + 1;
+    setPage(newPage);
+    try {
+      const response = await axios.get(`https://www.omdbapi.com/?s=${searchTerm}&t=${searchTerm}&apikey=3cb6abaf&page=${newPage}`);
+      const newResults = response.data.Search || [];
+      setSearchResult((prevResults) => [...prevResults, ...newResults]);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleAdd = (watch) => {
@@ -70,7 +69,7 @@ function AddWatch() {
           <div>
             <div className="searchResults">
               {searchResult.map((watch) => (
-                <div key={watch.id} className="searchResult">
+                <div key={watch.imdbID} className="searchResult">
                   <img
                      src={watch.Poster !== 'N/A' ? watch.Poster : placeHolder} 
                      alt={watch.Title} 
