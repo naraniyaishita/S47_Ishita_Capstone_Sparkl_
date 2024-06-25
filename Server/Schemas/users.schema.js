@@ -12,16 +12,6 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true
-    ,
-    blogPosts: {
-        type: Array,
-    },
-    readingList : {
-        type: Array
-    },
-    watchList : {
-        type: Array
-    }
 
 }
 
