@@ -5,7 +5,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 function AddWatchlistForm() {
   const location = useLocation();
   const { watch } = location.state;
-  console.log(watch);
   const [title, setTitle] = useState(watch.Title);
   const [type, setType] = useState(watch.Type === "series" ? "Series" : "Movie");
   const [coverImageURL, setCoverImageURL] = useState(watch.Poster);
@@ -23,7 +22,7 @@ function AddWatchlistForm() {
     e.preventDefault();
     try {
       const genreArray = genreInput.split(',').map(genre => genre.trim());
-      console.log(genreArray);
+    
 
       const response = await axios.post('http://localhost:2004/watchList', {
         userId,
@@ -33,7 +32,6 @@ function AddWatchlistForm() {
         genre: genreArray,
         whereTo,
       });
-      console.log(response);
       navigate('/watchlist');
     } catch (error) {
       console.error(error);

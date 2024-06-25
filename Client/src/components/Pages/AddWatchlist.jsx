@@ -21,7 +21,6 @@ function AddWatch() {
         setNoResult(false);
         const newResults = response.data.Search || [];
         setSearchResult(newResults);
-        console.log(response.data);
       } else {
         console.log("No results found");
         setNoResult(true);
@@ -38,7 +37,7 @@ function AddWatch() {
       const response = await axios.get(`https://www.omdbapi.com/?s=${searchTerm}&t=${searchTerm}&apikey=3cb6abaf&page=${newPage}`);
       const newResults = response.data.Search || [];
       setSearchResult((prevResults) => [...prevResults, ...newResults]);
-      console.log(response.data);
+      
     } catch (error) {
       console.error(error);
     }
