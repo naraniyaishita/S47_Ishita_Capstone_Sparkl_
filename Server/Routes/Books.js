@@ -15,4 +15,12 @@ router.post('/', (req, res) => {
       .catch(err => res.status(400).json(err));
 })
 
+router.put('/update/:id' , (req, res) => {
+    const id = req.params.id
+    BookModal.findByIdAndUpdate(id, req.body)
+      .then(item => res.json(item))
+      .catch(err => res.status(400).json(err));
+      console.log(req.body);
+})
+
 export default router
