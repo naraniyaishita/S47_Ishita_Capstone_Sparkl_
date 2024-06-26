@@ -15,5 +15,14 @@ router.get("/", (req, res) => {
       .then((item) => res.json(item))
       .catch((err) => res.status(400).json(err));
   });
+
+  router.put("/update/:id", (req, res) => {
+    const id = req.params.id
+  WatchListModal.findByIdAndUpdate(id, req.body)
+      .then(item => res.json(item))
+      .catch(err => console.log(err));
+    
+})
   export default router
+
   
