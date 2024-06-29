@@ -22,4 +22,10 @@ router.put('/update/:id' , (req, res) => {
       .catch(err => console.log(err));
 })
 
+router.delete('/delete/:id', (req, res) => {
+    BookModal.findByIdAndDelete(req.params.id)
+      .then(item => res.json(item))
+      .catch(err => res.status(400).json(err));
+})  
+
 export default router

@@ -16,9 +16,25 @@ function BookShelf() {
       })
       .catch((err) => console.log(err));
   }, []);
-  const handleDelete = (id) => {};
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:2004/books/delete/${id}`).then(res => {console.log(res)
+        window.location.reload()
+      })
+      
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const handleStatusChange = (id) => {};
+  const handleStatusChange = async (bookId, newStatus) => {
+    try {
+      await axios.put(`http://localhost:2004/books/update/${bookId}`, { wantTo: newStatus });
+      setBooks(Books.map(book => book._id === bookId ? { ...book, wantTo: newStatus } : book));
+    } catch (error) {
+      console.error(error);
+    }
+ };
 
   return (
     <>

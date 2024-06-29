@@ -17,6 +17,8 @@ import AddBookForm from './components/Pages/AddBookForm';
 import AddWatch from './components/Pages/AddWatchlist';
 import AddWatchlistForm from './components/Pages/AddWatchlistForm';
 
+import EditWatch from './components/Pages/EditWatch';
+
 const routes = [
   { path: '/', element: <WelcomePage /> },
   { path: '/register', element: <RegistrationPage /> },
@@ -31,6 +33,7 @@ const routes = [
   { path: "/books/add/form", element: <AddBookForm /> },
   { path: "/watchlist/add/form", element: <AddWatchlistForm /> },
   { path: "/watchlist/add", element: <AddWatch /> },
+  { path: "/watchlist/:id/edit", element: <EditWatch /> },
   
 
 

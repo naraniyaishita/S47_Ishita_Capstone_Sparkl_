@@ -25,9 +25,15 @@ function Blog() {
     const blog1 = Blogs.find(blog => blog._id === String(id));
 
     const handleDelete  = async (id) => {
-        
+        try {
+          await axios.delete(`http://localhost:1997/blog/delete/${id}`).then(res => {console.log(res)
+            navigate('/blogs')
+          })
+          
+        } catch (error) {
+          console.error(error);
+        }
       };
-      
     if (!blog1) {
         return <div>Blog not found</div>;
     }
