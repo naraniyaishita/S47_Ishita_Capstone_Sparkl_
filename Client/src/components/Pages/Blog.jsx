@@ -2,14 +2,17 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import '../Styles/Blog.css'
 import axios from 'axios'
+import UserContext from '../User/UserContext';
 
 function Blog() {
     const { id } = useParams()
     const [Blogs, setBlogs] = useState([]);
+    const { userId } = useContext(UserContext);
+
 
     const navigate = useNavigate();
     useEffect(() => {
-        axios.get(`http://localhost:2004/blog`)
+        axios.get(`http://localhost:2004/blog/${userId}`)
         .then(blogs =>  setBlogs(blogs.data))
         .catch(err => console.log(err))
     }, [])

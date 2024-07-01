@@ -3,16 +3,19 @@ import Navbar from '../Navbar'
 import '../Styles/Blogs.css'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import  UserContext  from '../User/UserContext'
 
 function BlogsPage() {
   const navigate = useNavigate()
   const [Blogs, setBlogs] = useState([]);
+  const { userId } = useContext(UserContext);
+
 
   useEffect(() => {
-    axios.get(`http://localhost:2004/blog`)
+    axios.get(`http://localhost:2004/blog/${userId}`)
       .then(blogs =>  setBlogs(blogs.data))
       .catch(err => console.log(err))
-  }, [])
+  }, [userId])
 
   function formatDate(dateString) {
     const formattedDate = new Date(dateString);

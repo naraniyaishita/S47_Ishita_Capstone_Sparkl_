@@ -1,21 +1,24 @@
 import React from "react";
 import Navbar from "../Navbar";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "../Styles/BookShelf.css";
+import UserContext from "../User/UserContext";
 
 function BookShelf() {
   const navigate = useNavigate();
   const [Books, setBooks] = useState([]);
+  const { userId } = useContext(UserContext);
+
   useEffect(() => {
     axios
-      .get(`http://localhost:2004/books`)
+      .get(`http://localhost:2004/books/${userId}`)
       .then((books) => {
         setBooks(books.data);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [userId]);
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:2004/books/delete/${id}`).then(res => {

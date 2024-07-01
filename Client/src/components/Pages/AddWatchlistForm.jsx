@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import UserContext from '../User/UserContext';
 
 function AddWatchlistForm() {
   const location = useLocation();
@@ -10,7 +11,8 @@ function AddWatchlistForm() {
   const [coverImageURL, setCoverImageURL] = useState(watch.Poster);
   const [genreInput, setGenreInput] = useState("");
   const [whereTo, setWhereTo] = useState("");
-  const userId = "6624c26997d84aa1a02bc970";
+  const { userId } = useContext(UserContext);
+
   
   const navigate = useNavigate();
 

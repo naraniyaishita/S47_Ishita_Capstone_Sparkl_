@@ -5,12 +5,16 @@ import BlogModal from "../Schemas/blogs.schema.js";
 const router = Router()
 import UploadonCloudinary from "../config/cloudinary.js";
 
-router.get("/", (req, res) => {
-    BlogModal.find({})
-      .then((users) => res.json(users))
-      .catch((err) => res.json(err));
+router.get('/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  try {
+     const blog = await BlogModal.find({ userId: userId });
+     res.json(blog)
+  } catch (error) {
+     console.error(error);
+     res.status(500).send('Server error');
+  }
 });
-
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

@@ -8,7 +8,16 @@ router.get("/", (req, res) => {
     .then((users) => res.json(users))
     .catch((err) => res.json(err));
 });
-
+router.get("/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const watchList = await WatchListModal.find({ userId: userId });
+    res.json(watchList);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
 router.post("/", (req, res) => {
   WatchListModal.create(req.body)
     .then((item) => res.json(item))
