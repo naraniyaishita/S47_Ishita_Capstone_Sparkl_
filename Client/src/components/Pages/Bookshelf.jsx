@@ -18,12 +18,12 @@ function BookShelf() {
   }, []);
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:2004/books/delete/${id}`).then(res => {console.log(res)
+      await axios.delete(`http://localhost:2004/books/delete/${id}`).then(res => {
         window.location.reload()
       })
       
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
@@ -32,7 +32,7 @@ function BookShelf() {
       await axios.put(`http://localhost:2004/books/update/${bookId}`, { wantTo: newStatus });
       setBooks(Books.map(book => book._id === bookId ? { ...book, wantTo: newStatus } : book));
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
  };
 

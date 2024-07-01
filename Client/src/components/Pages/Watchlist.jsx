@@ -38,11 +38,10 @@ function Watchlist() {
         await axios
           .delete(`http://localhost:2004/watchlist/delete/${id}`)
           .then((res) => {
-            console.log(res);
             window.location.reload();
           });
       } catch (error) {
-        console.error(error);
+        console.log(error);
       }
     };
   return (

@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
 router.post("/", (req, res) => {
   WatchListModal.create(req.body)
     .then((item) => res.json(item))
-    .catch((err) => res.status(400).json(err));
+    .catch((err) => console.log(err));
 });
 
 router.put("/update/:id", (req, res) => {
@@ -26,14 +26,14 @@ router.get("/item/:id", (req, res) => {
   const id = req.params.id;
   WatchListModal.findById(id)
     .then((item) => res.json(item))
-    .catch((err) => res.status(400).json(err));
+    .catch((err) => console.log(err));
 });
 
 router.delete("/delete/:id", (req, res) => {
   const id = req.params.id;
   WatchListModal.findByIdAndDelete(id)
     .then((item) => res.json(item))
-    .catch((err) => res.status(400).json(err));
+    .catch((err) => console.log(err));
 });
 
 export default router;

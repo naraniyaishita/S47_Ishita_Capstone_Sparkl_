@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
     BookModal.create(req.body)
       .then(item => res.json(item))
-      .catch(err => res.status(400).json(err));
+      .catch(err => console.log(err));
 })
 
 router.put('/update/:id' , (req, res) => {
@@ -25,7 +25,7 @@ router.put('/update/:id' , (req, res) => {
 router.delete('/delete/:id', (req, res) => {
     BookModal.findByIdAndDelete(req.params.id)
       .then(item => res.json(item))
-      .catch(err => res.status(400).json(err));
+      .catch(err => console.log(err));
 })  
 
 export default router

@@ -64,8 +64,8 @@ router.delete('/delete/:id', (req, res) => {
   const id = req.params.id
   BlogModal.findByIdAndDelete(id)
       .then(item => res.json(item))
-      .catch(err => res.status(400).json(err));
-      console.log(req.body);
+      .catch(err => console.log(err));
+    
 })
 
 export default router
