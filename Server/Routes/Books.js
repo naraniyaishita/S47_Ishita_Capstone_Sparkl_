@@ -3,11 +3,16 @@ import { Router } from "express";
 import BookModal from "../Schemas/books.schema.js";
 const router = Router()
 
-router.get('/', (req, res) => {
-    BookModal.find({})
-    .then(books => res.json(books))
-    .catch(err => res.json(err))
-})
+router.get("/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const books = await BookModal.find({ userId: userId });
+    res.json(books);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
 
 router.post('/', (req, res) => {
     BookModal.create(req.body)

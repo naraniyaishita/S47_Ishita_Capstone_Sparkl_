@@ -1,8 +1,9 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import Navbar from '../Navbar'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../Styles/Watchlist.css'
+import UserContext  from '../User/UserContext'
 
 function Watchlist() {
 
@@ -10,6 +11,8 @@ function Watchlist() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPlatform, setSelectedPlatform] = useState("All");
   const [datas, setDatas] = useState([]);
+  const { userId } = useContext(UserContext);
+
   const handleSearchInputChange = (e) => {
     setSearchQuery(e.target.value);
   };
@@ -20,10 +23,10 @@ function Watchlist() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:2004/watchList`)
+      .get(`http://localhost:2004/watchList/${userId}`)
       .then((datas) => setDatas(datas.data))
       .catch((err) => console.log(err));
-  }, []);
+  }, [userId]);
 
   const filteredWatchList = datas
     .filter((item) =>

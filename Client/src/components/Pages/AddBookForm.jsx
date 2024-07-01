@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react'
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import UserContext from '../User/UserContext';
 
 function AddBookForm() {
   const location = useLocation();
@@ -11,7 +12,7 @@ function AddBookForm() {
   const [wantTo, setWantTo] = useState("read");
   const [genreInput, setGenreInput] = useState('');
 
-  const  userId  = "6624c26997d84aa1a02bc970";
+  const { userId } = useContext(UserContext);
 
   const navigate = useNavigate();
   

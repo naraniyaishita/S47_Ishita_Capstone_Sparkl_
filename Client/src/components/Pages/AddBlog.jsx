@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import UserContext from "../User/UserContext";
 
 function AddBlog() {
  const navigate = useNavigate();
@@ -10,7 +11,8 @@ function AddBlog() {
  const [tagsInput, setInputTags] = useState("");
  const [images, setImages] = useState([]);
 
- const  userId  = "6624c26997d84aa1a02bc970";
+ const { userId } = useContext(UserContext);
+
 
  const handleSubmit = async (e) => {
     e.preventDefault();
