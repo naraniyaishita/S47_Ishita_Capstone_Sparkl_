@@ -33,9 +33,17 @@ function Watchlist() {
       (item) => selectedPlatform === "All" || item.whereTo === selectedPlatform
     );
 
-  const handleDelete = async (id) => {
-
-  };
+    const handleDelete = async (id) => {
+      try {
+        await axios
+          .delete(`http://localhost:2004/watchlist/delete/${id}`)
+          .then((res) => {
+            window.location.reload();
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
   return (
     <>
       <Navbar />

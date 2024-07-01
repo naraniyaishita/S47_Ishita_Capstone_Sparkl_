@@ -49,6 +49,23 @@ router.post("/", upload.array("photos", 12), async (req, res) => {
     res.status(400).json(error);
   }
 });
+router.get('/:_id', async (req, res) => {
+  const _id = req.params._id;
+  try {
+     const blog = await BlogModal.find({_id : _id});
+     res.json(blog)
+  } catch (error) {
+     console.error(error);
+     res.status(500).send('Server error');
+  }
+});
 
+router.delete('/delete/:id', (req, res) => {
+  const id = req.params.id
+  BlogModal.findByIdAndDelete(id)
+      .then(item => res.json(item))
+      .catch(err => console.log(err));
+    
+})
 
 export default router
