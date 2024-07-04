@@ -21,6 +21,9 @@ function RegistrationPage() {
       console.error(error);
     }
  };
+ const loginWithGoogle = () => {
+  window.open('http://localhost:2004/auth/google/callback', '_self');
+}
 
   return (
     <div className='RegisterPage'>
@@ -29,7 +32,7 @@ function RegistrationPage() {
       <form className='RegisterForm' onSubmit={handleRegister}>
 
         <div>
-          <button className='googleBtn'>CONTINUE WITH GOOGLE </button>
+          <button className='googleBtn' onClick={loginWithGoogle}>CONTINUE WITH GOOGLE </button>
         </div>
         <div>
           <label> Username : </label>

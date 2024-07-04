@@ -8,6 +8,11 @@ import BookRoute from './Routes/Books.js'
 import BlogRoute from './Routes/Blog.js'
 import WatchListRoute from './Routes/Watchlist.js'
 
+import session from "express-session";
+import passport from "passport";
+import GoogleModal from "./Schemas/googleUser.schema.js";
+import { Strategy as OAuth2Strategy } from "passport-google-oauth2";
+
 
 dotenv.config();
 const app = express();
@@ -28,6 +33,68 @@ mongoose
   .catch((err) => {
     console.error("Error connecting to MongoDB:", err);
   });
+
+  app.use(
+    session({
+      secret: process.env.CLIENT_SECRET_GOOGLE,
+      resave: false,
+      saveUninitialized: true,
+    })
+  );
+  
+  app.use(passport.initialize());
+  app.use(passport.session());
+  
+  passport.use(
+    new OAuth2Strategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: "http://localhost:2004/auth/google/callback",
+        scope: ["email", "profile"],
+      },
+      async (accessToken, refreshToken, profile, done) => {
+
+        try {
+          let user = await GoogleModal.findOne({ googleId: profile.id });
+  
+          if (!user) {
+            user = new GoogleModal({
+              googleId: profile.id,
+              name: profile.displayName,
+              email: profile.emails[0].value,
+              image: profile.photos[0].value,
+            });
+  
+            await user.save();
+          }
+  
+          return done(null, user);
+        } catch (error) {
+          return done(error, null);
+        }
+      }
+    )
+  );
+  
+  passport.serializeUser((user, done) => {
+    done(null, user);
+  });
+  
+  passport.deserializeUser((user, done) => {
+    done(null, user);
+  });
+  
+  app.get(
+    "/auth/google",
+    passport.authenticate("google", { scope: ["profile", "email"] })
+  );
+  
+  app.get("/auth/google/callback",passport.authenticate("google",{
+    successRedirect:"http://localhost:5173/home",
+    failureRedirect:"http://localhost:5173/login"
+  }))
+  
 
   app.use('/user',UserRoute)
   app.use('/blog', BlogRoute)
