@@ -5,7 +5,7 @@ import UserContext from '../User/UserContext'
 
 function LoginPage() {
     const navigate = useNavigate()
-    const { username, setUserName, useremail,setUserEmail, userId,setUserId } = useContext(UserContext);
+    const { setUserName, setUserEmail, setUserId } = useContext(UserContext);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -19,9 +19,7 @@ function LoginPage() {
         setUserName(user.name);
         setUserEmail(user.email);
         setUserId(user._id);
-  
 
-        console.log(username, useremail, userId);
         navigate('/home');
       } catch (error) {
         console.error(error);

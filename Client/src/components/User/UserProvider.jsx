@@ -7,9 +7,9 @@ const UserProvider = ({ children }) => {
  const [userId, setUserId] = useState('');
 
  useEffect(() => {
-  const storedUsername = localStorage.getItem('username');
-  const storedUserEmail = localStorage.getItem('useremail');
-  const storedUserId = localStorage.getItem('userId');
+  const storedUsername = sessionStorage.getItem('username');
+  const storedUserEmail = sessionStorage.getItem('useremail');
+  const storedUserId = sessionStorage.getItem('userId');
 
   if (storedUsername) setUserName(storedUsername);
   if (storedUserEmail) setUserEmail(storedUserEmail);
@@ -17,9 +17,9 @@ const UserProvider = ({ children }) => {
 }, []);
 
 useEffect(() => {
-  localStorage.setItem('username', username);
-  localStorage.setItem('useremail', useremail);
-  localStorage.setItem('userId', userId);
+  sessionStorage.setItem('username', username);
+  sessionStorage.setItem('useremail', useremail);
+  sessionStorage.setItem('userId', userId);
 }, [username, useremail, userId]);
 
  return (

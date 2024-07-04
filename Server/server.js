@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import jwt from 'jsonwebtoken'
 
 import UserRoute from './Routes/User.js'
 import BookRoute from './Routes/Books.js'
@@ -89,10 +90,15 @@ mongoose
     passport.authenticate("google", { scope: ["profile", "email"] })
   );
   
-  app.get("/auth/google/callback",passport.authenticate("google",{
-    successRedirect:"http://localhost:5173/home",
-    failureRedirect:"http://localhost:5173/login"
-  }))
+  app.get("/auth/google/callback",
+    passport.authenticate("google", { failureRedirect: "http://localhost:5173/login" }),
+    (req, res) => {
+      const token = jwt.sign({ userId: req.user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+  
+      res.redirect(`http://localhost:5173/google-success?token=${token}&userId=${req.user._id}&username=${req.user.name}&email=${req.user.email}`);
+    }
+  );
+  
   
 
   app.use('/user',UserRoute)
