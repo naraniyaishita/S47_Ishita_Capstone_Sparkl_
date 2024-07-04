@@ -54,7 +54,6 @@ mongoose
         scope: ["email", "profile"],
       },
       async (accessToken, refreshToken, profile, done) => {
-
         try {
           let user = await GoogleModal.findOne({ googleId: profile.id });
   
