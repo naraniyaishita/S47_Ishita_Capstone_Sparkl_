@@ -19,7 +19,10 @@ import AddWatchlistForm from './components/Pages/AddWatchlistForm';
 
 import EditWatch from './components/Pages/EditWatch';
 
+import GoogleSuccess from './components/AuthPages/GoogleSucess';
+
 const routes = [
+
   { path: '/', element: <WelcomePage /> },
   { path: '/register', element: <RegistrationPage /> },
   { path: '/login', element: <LoginPage /> },
@@ -34,10 +37,8 @@ const routes = [
   { path: "/watchlist/add/form", element: <AddWatchlistForm /> },
   { path: "/watchlist/add", element: <AddWatch /> },
   { path: "/watchlist/:id/edit", element: <EditWatch /> },
+  { path: "/google-success", element: <GoogleSuccess /> },
   
-
-
-
 ];
 
 function App() {

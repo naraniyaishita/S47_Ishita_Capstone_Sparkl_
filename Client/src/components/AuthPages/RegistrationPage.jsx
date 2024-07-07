@@ -15,7 +15,6 @@ function RegistrationPage() {
     try {
       const { data } = await axios.post('http://localhost:2004/user/register', { name, email, password });
   
-      console.log(data);
       navigate('/login');
     } catch (error) {   
       console.error(error);
