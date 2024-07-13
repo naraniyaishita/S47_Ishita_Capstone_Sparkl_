@@ -6,6 +6,9 @@ import { useNavigate } from "react-router-dom";
 import "../Styles/BookShelf.css";
 import UserContext from "../User/UserContext";
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function BookShelf() {
   const navigate = useNavigate();
   const [Books, setBooks] = useState([]);
@@ -22,11 +25,14 @@ function BookShelf() {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:2004/books/delete/${id}`).then(res => {
+        
+        window.alert('Are you sure you want to delete this item?')
         window.location.reload()
       })
       
     } catch (error) {
       console.log(error);
+      toast.error("Failed to delete book. Please try again.", {});
     }
   };
 
@@ -36,6 +42,7 @@ function BookShelf() {
       setBooks(Books.map(book => book._id === bookId ? { ...book, wantTo: newStatus } : book));
     } catch (error) {
       console.log(error);
+      toast.error("Error encountered while updating book status. Please try again.")
     }
  };
 
@@ -44,6 +51,7 @@ function BookShelf() {
       <Navbar />
 
       <h2 className="shelfTitle">
+      <ToastContainer autoClose={2000} style={{width: '30vw', height:'14vh'}}/>
         <button className="AddBtn"  onClick={() => navigate('/books/add')}>
           {" "}
           + ADD BOOK{" "}

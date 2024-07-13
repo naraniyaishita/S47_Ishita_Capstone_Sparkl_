@@ -80,44 +80,46 @@ function Watchlist() {
       </div>
 
       <div className="watchList">
-        {filteredWatchList &&
-          filteredWatchList.map((list) => {
-            return (
-              <div key={list._id} className="watchItem">
-                {/* {console.log(list)} */}
-                <div>
-                  <img
-                    src={list.coverImageURL}
-                    alt=""
-                    className="watchItemImg"
-                  />
-                </div>
-                <div className="watchTitle">{list.title}</div>
-                <div className="watchGenreDiv">
-                  {list.genre &&
-                    list.genre.map((genres, id) => (
-                      <p key={id} className="watchGenre">
-                        {genres}
-                      </p>
-                    ))}
-                </div>
-                <p className="watchWhere">Where to watch : {list.whereTo}</p>
-                <button
-                  className="remove"
-                  onClick={() => handleDelete(list._id)}
-                >
-                  Remove
-                </button>
-                <button
-                  className="edit"
-                  onClick={() => navigate(`/watchlist/${list._id}/edit`)}
-                >
-                  Edit
-                </button>
-              </div>
-            );
-          })}
-      </div>
+    {filteredWatchList && filteredWatchList.length > 0 ? (
+      filteredWatchList.map((list) => (
+        <div key={list._id} className="watchItem">
+          <div>
+            <img
+              src={list.coverImageURL}
+              alt=""
+              className="watchItemImg"
+            />
+          </div>
+          <div className="watchTitle">{list.title}</div>
+          <div className="watchGenreDiv">
+            {list.genre &&
+              list.genre.map((genres, id) => (
+                <p key={id} className="watchGenre">
+                  {genres}
+                </p>
+              ))}
+          </div>
+          <p className="watchWhere">Where to watch : {list.whereTo}</p>
+          <button
+            className="remove"
+            onClick={() => handleDelete(list._id)}
+          >
+            Remove
+          </button>
+          <button
+            className="edit"
+            onClick={() => navigate(`/watchlist/${list._id}/edit`)}
+          >
+            Edit
+          </button>
+        </div>
+      ))
+    ) : (
+      <p className="empty-watchlist-message">
+        Nothing in your watchlist. Try exploring by clicking on the add button.
+      </p>
+    )}
+  </div>
     </>
   );
 }

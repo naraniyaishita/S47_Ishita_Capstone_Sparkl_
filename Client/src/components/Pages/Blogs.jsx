@@ -47,7 +47,6 @@ function BlogsPage() {
           <p>{blog.content}</p>          
           <p>Tags: {blog.tags.join(', ')}</p>
           <p>Created Date: {formatDate(blog.createdDate)}</p>
-          <p>Updated Date: {formatDate(blog.updatedDate)}</p>
           </div>
         </div>
       ))}

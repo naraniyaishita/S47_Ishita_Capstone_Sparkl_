@@ -2,59 +2,62 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../User/UserContext";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AddBlog() {
- const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [tagsInput, setInputTags] = useState("");
+  const [images, setImages] = useState([]);
+  const { userId } = useContext(UserContext);
 
- const [title, setTitle] = useState("");
- const [content, setContent] = useState("");
- const [tagsInput, setInputTags] = useState("");
- const [images, setImages] = useState([]);
-
- const { userId } = useContext(UserContext);
-
-
- const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(tagsInput);
     const tagsArray = tagsInput.split(" ").map((tag) => tag.trim());
-    console.log(tagsArray);
-
     const formData = new FormData();
     formData.append("userId", userId);
     formData.append("title", title);
     formData.append("content", content);
-    formData.append("tags", tagsArray);
+    formData.append("tags", JSON.stringify(tagsArray)); 
 
-
-    const imageArray =[]
-    images.forEach((image, index) => {
-      imageArray.push(image); 
-    });
-    
-    imageArray.forEach((image, index) => {
+    images.forEach((image) => {
       formData.append('photos', image);
-    })
+    });
 
+    const uploadToastId = toast.loading("Uploading blog...");
 
     try {
-      const response = await axios.post("http://localhost:2004/blog", formData, {
+      await axios.post("http://localhost:2004/blog", formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      navigate("/blogs");
+      toast.update(uploadToastId, {
+        render: "Blog uploaded successfully!",
+        type: 'success',
+        autoClose: 1000,
+        isLoading: false,
+        onClose: () => navigate("/blogs"), 
+      });
     } catch (error) {
-      console.error(error);
+      console.error(error)
+      toast.update(uploadToastId, {
+        render: "Failed to upload blog. Please try again.",
+        type: 'error',
+        autoClose: 2000,
+        isLoading: false,
+      });
     }
- };
+  };
 
- const handleImagesChange = (e) => {
+  const handleImagesChange = (e) => {
     const filesArray = Array.from(e.target.files);
     setImages(filesArray);
- };
+  };
 
- return (
+  return (
     <>
       <form onSubmit={handleSubmit}>
         <input
@@ -74,8 +77,9 @@ function AddBlog() {
         <input type="file" multiple onChange={handleImagesChange} />
         <button type="submit">Submit</button>
       </form>
+      <ToastContainer style={{width: '30vw', height:'14vh'}}/>
     </>
- );
+  );
 }
 
 export default AddBlog;
