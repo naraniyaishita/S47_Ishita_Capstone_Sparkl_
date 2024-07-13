@@ -3,6 +3,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../User/UserContext";
 
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function AddBlog() {
  const navigate = useNavigate();
 
@@ -36,6 +39,8 @@ function AddBlog() {
       formData.append('photos', image);
     })
 
+    const uploadToastId = toast.loading("Uploading blog...");
+
 
     try {
       const response = await axios.post("http://localhost:2004/blog", formData, {
@@ -43,9 +48,24 @@ function AddBlog() {
           'Content-Type': 'multipart/form-data',
         },
       });
-      navigate("/blogs");
+      toast.update(uploadToastId, {
+        render: "Blog uploaded successfully!",
+        type: 'success',
+        autoClose: 1000,
+        isLoading: false,
+      });
+      setTimeout(() =>{
+
+        navigate("/blogs");
+      },1000)
     } catch (error) {
-      console.error(error);
+      console.error(error)
+      toast.update(uploadToastId, {
+        render: "Failed to upload blog. Please try again.",
+        type: 'error',
+        autoClose: 2000,
+        isLoading: false,
+      });
     }
  };
 
@@ -74,6 +94,7 @@ function AddBlog() {
         <input type="file" multiple onChange={handleImagesChange} />
         <button type="submit">Submit</button>
       </form>
+      <ToastContainer style={{width: '30vw', height:'14vh'}}/>
     </>
  );
 }

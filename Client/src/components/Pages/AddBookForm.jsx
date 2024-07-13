@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserContext from '../User/UserContext';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function AddBookForm() {
   const location = useLocation();
   const { book } = location.state;
@@ -37,9 +40,13 @@ function AddBookForm() {
 
       const response = await axios.post('http://localhost:2004/books', postData);
       console.log(response.data);
-      navigate('/bookshelf')
+      toast.success("Book added successfully!");
+      setTimeout(()=>{
+        navigate('/bookshelf')
+      }, 1000)
     } catch (error) {
       console.error(error);
+      toast.error("Failed to add book. Please try again.");
     }
   }
   return (
@@ -85,6 +92,7 @@ function AddBookForm() {
         <br />
         <button type="submit" onClick={handleSubmit}>Add Book</button>
       </form>
+      <ToastContainer style={{width: '30vw', height:'14vh'}}/>  
     </div>
   )
 }

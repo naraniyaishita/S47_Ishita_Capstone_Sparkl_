@@ -15,7 +15,6 @@ function LoginPage() {
       try {
         const response = await axios.post('http://localhost:2004/user/login', { name, email, password });
         const { token, user } = response.data;
-        console.log(token, user);
         setUserName(user.name);
         setUserEmail(user.email);
         setUserId(user._id);

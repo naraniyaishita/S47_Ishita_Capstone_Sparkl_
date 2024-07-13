@@ -54,7 +54,6 @@ function Blog() {
             <p className='blog-content'>{blog1.content}</p>
             <p>Tags: {blog1.tags.join(', ')}</p>
             <p>Created Date: {formatDate(blog1.createdDate)}</p>
-            <p>Updated Date: {formatDate(blog1.updatedDate)}</p>
 
             <div>
                 {blog1.imagepath && blog1.imagepath.map((image, index) => (
