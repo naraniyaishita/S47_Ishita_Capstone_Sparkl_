@@ -14,7 +14,7 @@ function EditWatch() {
   const [whereTo, setWhereTo] = useState('')
   
   useEffect(() => {
-    axios.get(`http://localhost:2004/watchList/item/${id}`)
+    axios.get(`${import.meta.env.VITE_SERVER}/watchList/item/${id}`)
     .then(res => {
       setTitle(res.data.title)
       setType(res.data.type)
@@ -29,7 +29,7 @@ function EditWatch() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://localhost:2004/watchList/update/${id}`, {title, type, coverImageURL, genre, whereTo});
+      const response = await axios.put(`${import.meta.env.VITE_SERVER}/watchList/update/${id}`, {title, type, coverImageURL, genre, whereTo});
       console.log(response.data);
 
       navigate('/watchlist')

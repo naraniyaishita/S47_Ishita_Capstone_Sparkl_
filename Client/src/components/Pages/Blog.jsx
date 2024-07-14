@@ -12,7 +12,7 @@ function Blog() {
 
     const navigate = useNavigate();
     useEffect(() => {
-        axios.get(`http://localhost:2004/blog/${userId}`)
+        axios.get(`${import.meta.env.VITE_SERVER}/blog/${userId}`)
         .then(blogs =>  setBlogs(blogs.data))
         .catch(err => console.log(err))
     }, [])
@@ -29,7 +29,7 @@ function Blog() {
 
     const handleDelete  = async (id) => {
         try {
-          await axios.delete(`http://localhost:1997/blog/delete/${id}`).then(res => {
+          await axios.delete(`${import.meta.env.VITE_SERVER}/blog/delete/${id}`).then(res => {
             navigate('/blogs')
           })
           

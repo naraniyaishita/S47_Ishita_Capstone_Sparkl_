@@ -12,7 +12,7 @@ function BlogsPage() {
 
 
   useEffect(() => {
-    axios.get(`http://localhost:2004/blog/${userId}`)
+    axios.get(`${import.meta.env.VITE_SERVER}/blog/${userId}`)
       .then(blogs =>  setBlogs(blogs.data))
       .catch(err => console.log(err))
   }, [userId])

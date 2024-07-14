@@ -26,7 +26,7 @@ function AddWatchlistForm() {
       const genreArray = genreInput.split(',').map(genre => genre.trim());
     
 
-      const response = await axios.post('http://localhost:2004/watchList', {
+      const response = await axios.post(`${import.meta.env.VITE_SERVER}/watchList`, {
         userId,
         title,
         coverImageURL,

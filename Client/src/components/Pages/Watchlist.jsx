@@ -23,7 +23,7 @@ function Watchlist() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:2004/watchList/${userId}`)
+      .get(`${import.meta.env.VITE_SERVER}/watchList/${userId}`)
       .then((datas) => setDatas(datas.data))
       .catch((err) => console.log(err));
   }, [userId]);
@@ -39,7 +39,7 @@ function Watchlist() {
     const handleDelete = async (id) => {
       try {
         await axios
-          .delete(`http://localhost:2004/watchlist/delete/${id}`)
+          .delete(`${import.meta.env.VITE_SERVER}/watchlist/delete/${id}`)
           .then((res) => {
             window.location.reload();
           });

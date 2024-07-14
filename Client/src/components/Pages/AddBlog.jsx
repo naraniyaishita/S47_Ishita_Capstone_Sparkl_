@@ -29,7 +29,7 @@ function AddBlog() {
     const uploadToastId = toast.loading("Uploading blog...");
 
     try {
-      await axios.post("http://localhost:2004/blog", formData, {
+      await axios.post(`${import.meta.env.VITE_SERVER}/blog`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
