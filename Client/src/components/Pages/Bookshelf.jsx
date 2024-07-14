@@ -16,15 +16,15 @@ function BookShelf() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:2004/books/${userId}`)
+      .get(`${import.meta.env.VITE_SERVER}/books/${userId}`)
       .then((books) => {
-        setBooks(books.data);
+        setBooks(books.data)
       })
       .catch((err) => console.log(err));
   }, [userId]);
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:2004/books/delete/${id}`).then(res => {
+      await axios.delete(`${import.meta.env.VITE_SERVER}/books/delete/${id}`).then(res => {
         
         window.alert('Are you sure you want to delete this item?')
         window.location.reload()
@@ -38,7 +38,7 @@ function BookShelf() {
 
   const handleStatusChange = async (bookId, newStatus) => {
     try {
-      await axios.put(`http://localhost:2004/books/update/${bookId}`, { wantTo: newStatus });
+      await axios.put(`${import.meta.env.VITE_SERVER}/books/update/${bookId}`, { wantTo: newStatus });
       setBooks(Books.map(book => book._id === bookId ? { ...book, wantTo: newStatus } : book));
     } catch (error) {
       console.log(error);
@@ -49,7 +49,7 @@ function BookShelf() {
   return (
     <>
       <Navbar />
-
+      
       <h2 className="shelfTitle">
       <ToastContainer autoClose={2000} style={{width: '30vw', height:'14vh'}}/>
         <button className="AddBtn"  onClick={() => navigate('/books/add')}>

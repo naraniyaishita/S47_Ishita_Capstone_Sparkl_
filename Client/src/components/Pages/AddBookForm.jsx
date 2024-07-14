@@ -38,7 +38,7 @@ function AddBookForm() {
         genres: genreArray
       };
 
-      const response = await axios.post('http://localhost:2004/books', postData);
+      const response = await axios.post(`${import.meta.env.VITE_SERVER}/books`, postData);
       console.log(response.data);
       toast.success("Book added successfully!");
       setTimeout(()=>{
