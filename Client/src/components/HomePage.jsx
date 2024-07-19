@@ -1,6 +1,7 @@
 import React, {useContext} from 'react'
 import Navbar from './Navbar'
 import UserContext from './User/UserContext'
+import './Styles/Home.css'
 
 function HomePage() {
   const {username} = useContext(UserContext)

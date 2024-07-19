@@ -11,7 +11,9 @@ function Watchlist() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPlatform, setSelectedPlatform] = useState("All");
   const [datas, setDatas] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { userId } = useContext(UserContext);
+
 
   const handleSearchInputChange = (e) => {
     setSearchQuery(e.target.value);
@@ -24,8 +26,12 @@ function Watchlist() {
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_SERVER}/watchList/${userId}`)
-      .then((datas) => setDatas(datas.data))
-      .catch((err) => console.log(err));
+      .then((datas) => {setDatas(datas.data)
+        setLoading(false);
+      })
+      .catch((err) => {console.log(err)
+        setLoading(false);
+      });
   }, [userId]);
 
   const filteredWatchList = datas
@@ -79,47 +85,43 @@ function Watchlist() {
         </select>
       </div>
 
-      <div className="watchList">
-    {filteredWatchList && filteredWatchList.length > 0 ? (
-      filteredWatchList.map((list) => (
-        <div key={list._id} className="watchItem">
-          <div>
-            <img
-              src={list.coverImageURL}
-              alt=""
-              className="watchItemImg"
-            />
-          </div>
-          <div className="watchTitle">{list.title}</div>
-          <div className="watchGenreDiv">
-            {list.genre &&
-              list.genre.map((genres, id) => (
-                <p key={id} className="watchGenre">
-                  {genres}
-                </p>
-              ))}
-          </div>
-          <p className="watchWhere">Where to watch : {list.whereTo}</p>
-          <button
-            className="remove"
-            onClick={() => handleDelete(list._id)}
-          >
-            Remove
-          </button>
-          <button
-            className="edit"
-            onClick={() => navigate(`/watchlist/${list._id}/edit`)}
-          >
-            Edit
-          </button>
+      {loading ? (
+        <div className="loading">
+          <p>Loading watchlist...</p>
         </div>
-      ))
-    ) : (
-      <p className="empty-watchlist-message">
-        Nothing in your watchlist. Try exploring by clicking on the add button.
-      </p>
-    )}
-  </div>
+      ) : (
+        <div className="watchList">
+          {filteredWatchList && filteredWatchList.length > 0 ? (
+            filteredWatchList.map((list) => (
+              <div key={list._id} className="watchItem">
+                <div>
+                  <img src={list.coverImageURL} alt="" className="watchItemImg" />
+                </div>
+                <div className="watchTitle">{list.title}</div>
+                <div className="watchGenreDiv">
+                  {list.genre &&
+                    list.genre.map((genres, id) => (
+                      <p key={id} className="watchGenre">
+                        {genres}
+                      </p>
+                    ))}
+                </div>
+                <p className="watchWhere">Where to watch : {list.whereTo}</p>
+                <button className="remove" onClick={() => handleDelete(list._id)}>
+                  Remove
+                </button>
+                <button className="edit" onClick={() => navigate(`/watchlist/${list._id}/edit`)}>
+                  Edit
+                </button>
+              </div>
+            ))
+          ) : (
+            <p className="empty-watchlist-message">
+              Nothing in your watchlist. Try exploring by clicking on the add button.
+            </p>
+          )}
+        </div>
+      )}
     </>
   );
 }

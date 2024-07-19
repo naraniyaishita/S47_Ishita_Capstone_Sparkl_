@@ -1,0 +1,8 @@
+#helloUser{
+    text-align: center;
+    margin: 20px 0;
+    font-size: 3.5rem;
+    font-family: var(--font-style-one);
+    color: var(--font-color-one);
+    text-transform: capitalize;
+}
