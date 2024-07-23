@@ -1,0 +1,21 @@
+.Spotify{
+    border: 1px solid black;
+    margin : 1vh;
+    padding: 1vh;
+
+}
+.Spotify header{
+    text-align: center;
+}
+.SpotifyData{
+display: flex;
+justify-content: space-around;
+}
+.SpotifySearch{}
+.SpotifyLiked{
+    width: 25%;
+}
+.SpotifyButtons{
+    display: flex;
+    justify-content: space-around;
+}
