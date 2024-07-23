@@ -8,7 +8,7 @@ import Loginfirst from "../Loginfirst";
 function Blog() {
     const { id } = useParams()
     const [Blogs, setBlogs] = useState([]);
-    const { userId } = useContext(UserContext);
+    const { username ,userId } = useContext(UserContext);
 
 
     const navigate = useNavigate();

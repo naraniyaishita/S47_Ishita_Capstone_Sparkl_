@@ -10,7 +10,7 @@ function BlogsPage() {
   const navigate = useNavigate()
   const [Blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true)
-  const { userId } = useContext(UserContext);
+  const { username, userId } = useContext(UserContext);
 
 
   useEffect(() => {

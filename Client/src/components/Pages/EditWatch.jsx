@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import Loginfirst from "../Loginfirst";
+import  UserContext from '../User/UserContext';
+
 
 function EditWatch() {
-
+  
   const navigate = useNavigate();
   const {id} = useParams()
   const [title, setTitle] = useState('')
@@ -13,6 +15,7 @@ function EditWatch() {
   const [coverImageURL, setCoverImageURL] = useState('')
   const [genre, setGenre] = useState([])
   const [whereTo, setWhereTo] = useState('')
+  const { username } = useContext(UserContext);
   
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_SERVER}/watchList/item/${id}`)
