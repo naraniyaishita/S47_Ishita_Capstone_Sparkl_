@@ -21,14 +21,14 @@ function Spotify() {
   const [isShuffle, setIsShuffle] = useState(false);
   const [CurrentSong, setCurrentSong] = useState("");
 
-  const [searchType, setSearchType] = useState("artist");
+  const [searchType, setSearchType] = useState("track");
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeDevice, setActiveDevice] = useState(null);
 
   //setToken
   useEffect(() => {
     const hash = window.location.hash;
-    let token = window.localStorage.getItem("token");
+    let token = window.sessionStorage.getItem("Spotifytoken");
 
     if (!token && hash) {
       token = hash
@@ -38,12 +38,27 @@ function Spotify() {
         .split("=")[1];
 
       window.location.hash = "";
-      window.localStorage.setItem("token", token);
+      window.sessionStorage.setItem("Spotifytoken", token);
+
+      window.history.replaceState(null, null, "/home");
     }
 
     setToken(token);
   }, []);
-
+  const checkTokenValidity = async () => {
+    try {
+      const response = await axios.get("https://api.spotify.com/v1/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.status === 200;
+    } catch (error) {
+      console.error("Token is invalid or expired", error);
+      logout();
+      return false;
+    }
+  };
   //search artist
   const searchArtists = async (e) => {
     e.preventDefault();
@@ -85,21 +100,21 @@ function Spotify() {
     return topArtists.map((artist) => <div key={artist.id}>{artist.name}</div>);
   };
 
-  const renderArtists = () => {
-    // console.log("SearchData", SearchData);
+  const renderSearchResults = () => {
     return SearchData.map((data) => (
       <div key={data.id} className="searchItem">
-        {console.log(data)}
-        {data.images ? (
-          <img src={data.images[1].url} alt="" className="searchImg" />
-        ) : (
-          <div>No Image</div>
+        {data.album && (
+          <img src={data.album.images[2].url} alt="" className="searchImg" />
         )}
+        {
+          data.images &&
+          <img src={data.images[2].url} alt="" className="searchImg" />
+        }
         {data.name}
+        <button onClick={() => playSelectedItem(data.uri, searchType)}>Play</button>
       </div>
     ));
   };
-
   const getLikedSongs = async () => {
     setIsLikedLoading(true);
     let offset = 0;
@@ -216,22 +231,24 @@ function Spotify() {
     }
   };
 
-  const playSelectedSong = async (uri) => {
+  const playSelectedItem = async (uri, type) => {
     try {
+      const requestBody = type === "album" ? { context_uri: uri } : { uris: [uri] };
       await axios.put(
         `https://api.spotify.com/v1/me/player/play`,
-        { uris: [uri] },
+        requestBody,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log("Playing selected song");
+      console.log(`Playing selected ${type}`);
     } catch (error) {
-      console.error("Failed to play selected song", error);
+      console.error(`Failed to play selected ${type}`, error);
     }
   };
+  
   useEffect(() => {
 
     if (token) {
@@ -242,6 +259,7 @@ function Spotify() {
     
   }, [token]);
   const fetchCurrentSong = async () => {
+    if (!(await checkTokenValidity())) return;
     try {
       const response = await axios.get(
         "https://api.spotify.com/v1/me/player/currently-playing",
@@ -262,6 +280,7 @@ function Spotify() {
     }
   };
   const checkDevices = async () => {
+    if (!(await checkTokenValidity())) return;
     try {
       const response = await axios.get(
         "https://api.spotify.com/v1/me/player/devices",
@@ -285,6 +304,8 @@ function Spotify() {
     }
   };
   const State = async () => {
+    if (!(await checkTokenValidity())) return;
+
     try {
       const response = await axios.get(
         `https://api.spotify.com/v1/me/player`,
@@ -305,13 +326,13 @@ function Spotify() {
   fetchCurrentSong()
   checkDevices()
  }
+ const logout = () => {
+  setToken("");
+  window.Spotifytoken.removeItem("Spotifytoken");
+  window.location.href = AUTH_ENDPOINT;
+  window.location.reload();
+};
 
-  const logout = () => {
-    setToken("");
-    window.localStorage.removeItem("token");
-    window.location.href = "/home";
-    window.location.reload();
-  };
   return (
     <>
       {!token ? (
@@ -329,11 +350,6 @@ function Spotify() {
           </header>
           <div className="SpotifyButtons">
             <button onClick={refresh}>Refresh</button>
-            {isPlaying ? (
-              <button onClick={Pause}>Pause</button>
-            ) : (
-              <button onClick={Play}>Play</button>
-            )}
             <p>{CurrentSong}</p>
             <button onClick={Pause}>Pause</button>
             <button onClick={Play}>Play</button>
@@ -349,13 +365,9 @@ function Spotify() {
                     value={searchType}
                     onChange={(e) => setSearchType(e.target.value)}
                   >
-                    <option value="artist">Artist</option>
-                    <option value="album">Album</option>
-                    <option value="playlist">Playlist</option>
                     <option value="track">Track</option>
-                    <option value="show">Show</option>
-                    <option value="episode">Episode</option>
-                    <option value="audiobook">Audiobook</option>
+                    <option value="album">Album</option>
+                
                   </select>
                   <input
                     type="text"
@@ -364,7 +376,7 @@ function Spotify() {
                   <button type={"submit"}>Search</button>
                 </div>
               </form>
-              <div className="searchResultsSpotify">{renderArtists()}</div>
+              <div className="searchResultsSpotify">{renderSearchResults()}</div>
             </div>
 
             <div>

@@ -5,6 +5,7 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "../Styles/BookShelf.css";
 import UserContext from "../User/UserContext";
+import Loginfirst from "../Loginfirst";
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -51,7 +52,7 @@ function BookShelf() {
     }
  };
 
-  return (
+  return  username && username.length > 0 ?(
     <>
       <Navbar />
       
@@ -213,7 +214,7 @@ function BookShelf() {
         </div>
       )}
     </>
-  );
+  ) : <Loginfirst />;
 }
 
 export default BookShelf;

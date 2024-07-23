@@ -4,6 +4,7 @@ import '../Styles/Blogs.css'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import  UserContext  from '../User/UserContext'
+import Loginfirst from "../Loginfirst";
 
 function BlogsPage() {
   const navigate = useNavigate()
@@ -32,7 +33,7 @@ function BlogsPage() {
       day: 'numeric',
     });
   }
-  return (
+  return  username && username.length > 0 ?(
     <>
     <Navbar/>
     <div className='BlogTopDiv'>
@@ -63,7 +64,7 @@ function BlogsPage() {
         </div>
       )}
     </>
-  )
+  ) : <Loginfirst />
       }
 
 export default BlogsPage
