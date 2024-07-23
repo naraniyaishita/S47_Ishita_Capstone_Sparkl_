@@ -13,7 +13,7 @@ function Watchlist() {
   const [selectedPlatform, setSelectedPlatform] = useState("All");
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { userId } = useContext(UserContext);
+  const { username, userId } = useContext(UserContext);
 
 
   const handleSearchInputChange = (e) => {

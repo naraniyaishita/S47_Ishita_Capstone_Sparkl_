@@ -12,7 +12,7 @@ function AddWatchlistForm() {
   const [coverImageURL, setCoverImageURL] = useState(watch.Poster);
   const [genreInput, setGenreInput] = useState("");
   const [whereTo, setWhereTo] = useState("");
-  const { userId } = useContext(UserContext);
+  const { username, userId } = useContext(UserContext);
 
   
   const navigate = useNavigate();
