@@ -13,7 +13,7 @@ function LoginPage() {
     const handleLogin = async (e) => {
       e.preventDefault();
       try {
-        const response = await axios.post('http://localhost:2004/user/login', { name, email, password });
+        const response = await axios.post('https://sparkl.onrender.com/user/login', { name, email, password });
         const { token, user } = response.data;
         setUserName(user.name);
         setUserEmail(user.email);
@@ -25,7 +25,7 @@ function LoginPage() {
       }
    }; 
    const loginWithGoogle = () => {
-    window.open('http://localhost:2004/auth/google/callback', '_self');
+    window.open('https://sparkl.onrender.com/auth/google/callback', '_self');
  }
 
   return (
