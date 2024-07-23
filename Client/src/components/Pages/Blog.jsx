@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import '../Styles/Blog.css'
 import axios from 'axios'
 import UserContext from '../User/UserContext';
+import Loginfirst from "../Loginfirst";
 
 function Blog() {
     const { id } = useParams()
@@ -41,7 +42,7 @@ function Blog() {
         return <div>Blog not found</div>;
     }
 
-    return (
+    return  username && username.length > 0 ? (
         <div className='Blog'>
             <div className='blog-top'>
 
@@ -61,7 +62,7 @@ function Blog() {
                 ))}
             </div>
         </div>
-    );
+    ) : <Loginfirst />
 }
 
 export default Blog

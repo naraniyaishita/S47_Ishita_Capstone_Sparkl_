@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/Add.css'
 import bookCover from '../../assets/bookCover.png';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import UserContext from '../User/UserContext';
+import Loginfirst from '../Loginfirst';
 function AddBook() {
-
+  const {username } = useContext(UserContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false); 
@@ -41,7 +43,7 @@ function AddBook() {
     navigate('/books/add/form', {state :{book}})
   }
   
-  return (
+  return  username && username.length > 0 ?(
     <div >
       <ToastContainer style={{width: '30vw', height:'14vh'}} autoClose={3000}/>
       <form onSubmit={handleSearch} className='addSearch'>
@@ -70,7 +72,7 @@ function AddBook() {
         </div>
       )}
     </div>
-  );
+  ):<Loginfirst/>
 }
 
 export default AddBook

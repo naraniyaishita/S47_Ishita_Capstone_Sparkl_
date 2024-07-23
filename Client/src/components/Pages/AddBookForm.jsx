@@ -5,6 +5,8 @@ import UserContext from '../User/UserContext';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Loginfirst from "../Loginfirst";
+
 
 function AddBookForm() {
   const location = useLocation();
@@ -15,7 +17,7 @@ function AddBookForm() {
   const [wantTo, setWantTo] = useState("read");
   const [genreInput, setGenreInput] = useState('');
 
-  const { userId } = useContext(UserContext);
+  const { username,userId } = useContext(UserContext);
 
   const navigate = useNavigate();
   
@@ -49,7 +51,7 @@ function AddBookForm() {
       toast.error("Failed to add book. Please try again.");
     }
   }
-  return (
+  return username && username.length > 0 ?(
     <div>
       <form action="">
         <label htmlFor="">Enter Book Title</label>
@@ -94,6 +96,6 @@ function AddBookForm() {
       </form>
       <ToastContainer style={{width: '30vw', height:'14vh'}}/>  
     </div>
-  )
+  ) : <Loginfirst/>
 }
 export default AddBookForm

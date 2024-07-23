@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import UserContext from "../User/UserContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Loginfirst from "../Loginfirst";
 
 function AddBlog() {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ function AddBlog() {
   const [content, setContent] = useState("");
   const [tagsInput, setInputTags] = useState("");
   const [images, setImages] = useState([]);
-  const { userId } = useContext(UserContext);
+  const {username, userId } = useContext(UserContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,7 +58,7 @@ function AddBlog() {
     setImages(filesArray);
   };
 
-  return (
+  return username && username.length > 0 ? (
     <>
       <form onSubmit={handleSubmit}>
         <input
@@ -79,7 +80,7 @@ function AddBlog() {
       </form>
       <ToastContainer style={{width: '30vw', height:'14vh'}}/>
     </>
-  );
+  ):<Loginfirst/>
 }
 
 export default AddBlog;

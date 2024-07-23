@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../Styles/Watchlist.css'
 import UserContext  from '../User/UserContext'
+import Loginfirst from "../Loginfirst";
 
 function Watchlist() {
 
@@ -53,7 +54,7 @@ function Watchlist() {
         console.log(error);
       }
     };
-  return (
+  return  username && username.length > 0 ? (
     <>
       <Navbar />
       <h2 className="watchListTitle">Your Watch List</h2>
@@ -123,7 +124,7 @@ function Watchlist() {
         </div>
       )}
     </>
-  );
+  ) : <Loginfirst/>
 }
 
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import Loginfirst from "../Loginfirst";
 
 function EditWatch() {
 
@@ -38,7 +39,7 @@ function EditWatch() {
       console.error(error);
     }
   }
-  return (
+  return  username && username.length > 0 ?(
     <>
     <form onSubmit={handleSubmit}>
       <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -56,7 +57,7 @@ function EditWatch() {
       <button type='submit'>Submit</button>
     </form>
     </>
-  )
+  ) : <Loginfirst />
 }
 
 export default EditWatch

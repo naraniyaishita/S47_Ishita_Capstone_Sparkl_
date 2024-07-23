@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../Styles/Add.css";
 import placeHolder from '../../assets/placeHolder.jpg'
+import UserContext from "../User/UserContext";
+import Loginfirst from "../Loginfirst";
+
 
 function AddWatch() {
   const navigate = useNavigate();
@@ -10,6 +13,8 @@ function AddWatch() {
   const [searchResult, setSearchResult] = useState([]);
   const [page, setPage] = useState(1);
   const [noResult, setNoResult] = useState(false);
+
+  const { username } = useContext(UserContext);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -47,7 +52,7 @@ function AddWatch() {
     navigate("/watchlist/add/form", { state: { watch } });
   };
 
-  return (
+  return username && username.length > 0 ?(
     <div>
       <form className="addSearch" onSubmit={handleSearch}>
         <input
@@ -87,7 +92,7 @@ function AddWatch() {
         )
       )}
     </div>
-  );
+  ) : <Loginfirst/>
 }
 
 export default AddWatch;

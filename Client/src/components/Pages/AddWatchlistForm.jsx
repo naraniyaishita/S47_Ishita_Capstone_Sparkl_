@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserContext from '../User/UserContext';
+import Loginfirst from "../Loginfirst";
 
 function AddWatchlistForm() {
   const location = useLocation();
@@ -40,7 +41,7 @@ function AddWatchlistForm() {
     }
   };
 
-  return (
+  return  username && username.length > 0 ?(
     <div>
       <form onSubmit={handleSubmit}>
         <label htmlFor="title">Enter Title</label>
@@ -97,7 +98,7 @@ function AddWatchlistForm() {
         <button type="submit">Submit</button>
       </form>
     </div>
-  );
+  ) :<Loginfirst />
 }
 
 export default AddWatchlistForm;
