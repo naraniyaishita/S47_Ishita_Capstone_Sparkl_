@@ -394,7 +394,7 @@ function Spotify() {
                       {index + 1}. {song.track.name}
                     </p>
 
-                    <button onClick={() => playSelectedSong(song.track.uri)}>
+                    <button onClick={() => playSelectedItem(song.track.uri)}>
                       Play
                     </button>
                   </div>
