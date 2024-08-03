@@ -2,6 +2,16 @@ import React from "react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "../Styles/Spotify.css";
+import { ToastContainer, toast } from "react-toastify";
+import {
+  TbMusic,
+  TbPlayerPauseFilled,
+  TbPlayerPlayFilled,
+  TbPlayerTrackNextFilled,
+  TbPlayerTrackPrevFilled,
+  TbArrowsShuffle,
+  TbRefresh,
+} from "react-icons/tb";
 
 function Spotify() {
   const AUTH_ENDPOINT =
@@ -45,6 +55,7 @@ function Spotify() {
 
     setToken(token);
   }, []);
+  // Cheeking token validity
   const checkTokenValidity = async () => {
     try {
       const response = await axios.get("https://api.spotify.com/v1/me", {
@@ -55,12 +66,14 @@ function Spotify() {
       return response.status === 200;
     } catch (error) {
       console.error("Token is invalid or expired", error);
-      logout();
+      // logout();
+      // toast.info("Please login again to continue");
       return false;
     }
   };
-  //search artist
-  const searchArtists = async (e) => {
+  // Search Songs and albums
+  const searchItems = async (e) => {
+    refresh();
     e.preventDefault();
     const { data } = await axios.get("https://api.spotify.com/v1/search", {
       headers: {
@@ -71,13 +84,38 @@ function Spotify() {
         type: searchType,
       },
     });
-    console.log(data);
+    // console.log(data);
     const searchResults = data[`${searchType}s`].items;
     setSearchData(searchResults);
   };
+  const renderSearchResults = () => {
+    return SearchData.map((data) => (
+      <div key={data.id} className="searchItem">
+      
+          <button
+          style={{
+            backgroundImage: `url(${
+              data.album ? data.album.images[2].url : data.images[2].url
+            })`,
+          }}
+            onClick={() => playSelectedItem(data.uri, searchType)}
+            className="PlayButton"
+          >
+            <TbPlayerPlayFilled />
+          </button>
+       
+        <div>
+        <p>{data.name}</p>
+        <p>{data.artists[0].name}</p>
+        </div>
+        
+      </div>
+    ));
+  };
 
-  //get top artist
+  //Top artist
   const topArtist = async () => {
+    refresh();
     setIsTopLoading(true);
     try {
       const response = await axios.get(
@@ -89,6 +127,7 @@ function Spotify() {
         }
       );
       setTopArtists(response.data.items);
+      // console.log(response.data.items);
     } catch (error) {
       console.error("Failed to fetch top artists:", error);
     } finally {
@@ -99,23 +138,9 @@ function Spotify() {
   const renderTopArtist = () => {
     return topArtists.map((artist) => <div key={artist.id}>{artist.name}</div>);
   };
-
-  const renderSearchResults = () => {
-    return SearchData.map((data) => (
-      <div key={data.id} className="searchItem">
-        {data.album && (
-          <img src={data.album.images[2].url} alt="" className="searchImg" />
-        )}
-        {
-          data.images &&
-          <img src={data.images[2].url} alt="" className="searchImg" />
-        }
-        {data.name}
-        <button onClick={() => playSelectedItem(data.uri, searchType)}>Play</button>
-      </div>
-    ));
-  };
+  // Liked songs
   const getLikedSongs = async () => {
+    refresh();
     setIsLikedLoading(true);
     let offset = 0;
     let hasMore = true;
@@ -131,9 +156,9 @@ function Spotify() {
             },
           }
         );
-        console.log(response.data);
+        // console.log(response.data);
         songData = songData.concat(response.data.items);
-        console.log(songData);
+        // console.log(songData);
         offset += 20;
         hasMore = response.data.next !== null;
       } catch (error) {
@@ -143,10 +168,12 @@ function Spotify() {
     }
     setIsLikedLoading(false);
     setLikedSongData(songData);
-    console.log(likedSongData);
+    // console.log(likedSongData);
   };
 
+  //Playbacks
 
+  //Pause
   const Pause = async () => {
     try {
       await axios.put(
@@ -163,7 +190,7 @@ function Spotify() {
       console.error("Failed to pause", error);
     }
   };
-
+  //Play
   const Play = async () => {
     try {
       await axios.put(
@@ -196,6 +223,8 @@ function Spotify() {
       console.error("Failed to next", error);
     }
   };
+  
+  //Previous
   const Previous = async () => {
     try {
       await axios.post(
@@ -212,7 +241,7 @@ function Spotify() {
       console.error("Failed to previous", error);
     }
   };
-
+  //Shuffle
   const Shuffle = async () => {
     try {
       setIsShuffle(!isShuffle);
@@ -231,9 +260,11 @@ function Spotify() {
     }
   };
 
+  //Play selected
   const playSelectedItem = async (uri, type) => {
     try {
-      const requestBody = type === "album" ? { context_uri: uri } : { uris: [uri] };
+      const requestBody =
+        type === "album" ? { context_uri: uri } : { uris: [uri] };
       await axios.put(
         `https://api.spotify.com/v1/me/player/play`,
         requestBody,
@@ -243,23 +274,12 @@ function Spotify() {
           },
         }
       );
-      console.log(`Playing selected ${type}`);
     } catch (error) {
       console.error(`Failed to play selected ${type}`, error);
     }
   };
-  
-  useEffect(() => {
-
-    if (token) {
-      checkDevices();
-      fetchCurrentSong();
-      State();
-    }
-    
-  }, [token]);
+  //Current Song
   const fetchCurrentSong = async () => {
-    if (!(await checkTokenValidity())) return;
     try {
       const response = await axios.get(
         "https://api.spotify.com/v1/me/player/currently-playing",
@@ -279,8 +299,8 @@ function Spotify() {
       console.error("Failed to fetch current song", error);
     }
   };
+  //Devices
   const checkDevices = async () => {
-    if (!(await checkTokenValidity())) return;
     try {
       const response = await axios.get(
         "https://api.spotify.com/v1/me/player/devices",
@@ -297,77 +317,114 @@ function Spotify() {
       if (activeDevice) {
         setActiveDevice(activeDevice.id);
       } else {
-        console.error("No active devices found");
+        toast.error("No active devices found, Please Connect your device");
       }
     } catch (error) {
+      // toast.error("Failed to fetch devices");
       console.error("Failed to fetch devices", error);
     }
   };
+  //Player State
   const State = async () => {
-    if (!(await checkTokenValidity())) return;
-
     try {
-      const response = await axios.get(
-        `https://api.spotify.com/v1/me/player`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`https://api.spotify.com/v1/me/player`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.log(response.data);
       setIsPlaying(response.data.is_playing);
     } catch (error) {
       console.error("Failed to get player state", error);
     }
   };
- const refresh =() =>{
-  State()
-  fetchCurrentSong()
-  checkDevices()
- }
- const logout = () => {
-  setToken("");
-  window.Spotifytoken.removeItem("Spotifytoken");
-  window.location.href = AUTH_ENDPOINT;
-  window.location.reload();
-};
+  //Refresh
+  const refresh = () => {
+    checkTokenValidity();
+    State();
+    fetchCurrentSong();
+    checkDevices();
+  };
+  // setInterval(refresh, 1000 * 60 * 2);
+  //Logout
+  const logout = () => {
+    setToken("");
+    window.sessionStorage.removeItem("Spotifytoken");
+  };
+
 
   return (
     <>
       {!token ? (
         <div className="Spotify">
+          {/* Spotify */}
           <header className="App-header">
-            <h1>Spotify</h1>
-            <a href={AUTH_ENDPOINT}>Login to Spotify</a>
+            <h1>
+              <img
+                src="https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Full_Logo_RGB_White.png"
+                alt="spotify"
+                className="SpotifyLogo"
+              />{" "}
+            </h1>
+            <button className="SpotifyLoginButton">
+              <a href={AUTH_ENDPOINT}>Login to Spotify</a>
+            </button>
           </header>
         </div>
       ) : (
         <div className="Spotify">
           <header className="App-header">
-            <h1>Spotify</h1>
-            <button onClick={logout}>Logout</button>
+            <h1>
+              <img
+                src="https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Full_Logo_RGB_White.png"
+                alt="spotify"
+                className="SpotifyLogo"
+              />
+            </h1>
+            <button onClick={logout} className="SpotifyLogoutButton">
+              Logout
+            </button>
           </header>
+          {/* Spotify Playback Buttons */}
           <div className="SpotifyButtons">
-            <button onClick={refresh}>Refresh</button>
-            <p>{CurrentSong}</p>
-            <button onClick={Pause}>Pause</button>
-            <button onClick={Play}>Play</button>
-            <button onClick={Next}>Next</button>
-            <button onClick={Previous}>Previous</button>
-            <button onClick={Shuffle}>Shuffle</button>
+            <div className="SpotifyPlayer">
+              <button onClick={refresh}>
+                {" "}
+                <TbRefresh /> Refresh
+              </button>
+
+              <p className="CurrentSong">
+                <TbMusic />
+                {CurrentSong}
+              </p>
+            </div>
+            <button onClick={Pause}>
+              <TbPlayerPauseFilled />
+            </button>
+            <button onClick={Play}>
+              <TbPlayerPlayFilled />
+            </button>
+            <button onClick={Next}>
+              <TbPlayerTrackNextFilled />
+            </button>
+            <button onClick={Previous}>
+              <TbPlayerTrackPrevFilled />
+            </button>
+            <button onClick={Shuffle}>
+              <TbArrowsShuffle />
+            </button>
           </div>
           <div className="SpotifyData">
-            <div className="SpotifySearch">
-              <form onSubmit={searchArtists} className="SearchFormSpotify">
-                <div>
+            {/* Spotify Search */}
+            <div className="SpotifySearch"> 
+              <form onSubmit={searchItems} className="SearchFormSpotify">
+                <div className="SearchInputSpotify">
                   <select
                     value={searchType}
                     onChange={(e) => setSearchType(e.target.value)}
                   >
                     <option value="track">Track</option>
                     <option value="album">Album</option>
-                
                   </select>
                   <input
                     type="text"
@@ -376,34 +433,52 @@ function Spotify() {
                   <button type={"submit"}>Search</button>
                 </div>
               </form>
-              <div className="searchResultsSpotify">{renderSearchResults()}</div>
+              <div className="searchResultsSpotify">
+                {renderSearchResults()}
+              </div>
             </div>
-
-            <div>
-              <button onClick={topArtist}>Top Artist</button>
-              {isTopLoading ? <div>Loading...</div> : renderTopArtist()}
+            {/* Spotify Top Artist */}
+            <div className="SpotifyTop">
+              <button onClick={topArtist} className="SpotifyGetButton">
+                Top Artist
+              </button>
+              {isTopLoading ? (
+                <div>Loading...</div>
+              ) : (
+                <div> {renderTopArtist()}</div>
+              )}
             </div>
             <div className="SpotifyLiked">
-              <button onClick={getLikedSongs}>Get Liked Songs</button>
+              <button onClick={getLikedSongs} className="SpotifyGetButton">
+                Get Liked Songs
+              </button>
               {isLikedLoading ? (
                 <div>Loading...</div>
               ) : (
-                likedSongData.map((song, index) => (
-                  <div key={index} className="LikedSongs">
-                    <p>
-                      {index + 1}. {song.track.name}
-                    </p>
-
-                    <button onClick={() => playSelectedItem(song.track.uri)}>
-                      Play
-                    </button>
-                  </div>
-                ))
+                <div className="LikedSongsContainer">
+                  {likedSongData.map((song, index) => (
+                    <div key={index} className="LikedSong">
+                      
+                        <button
+                        style={{
+                          backgroundImage: `url(${song.track.album.images[2].url})`,
+                        }}
+                          onClick={() => playSelectedItem(song.track.uri)}
+                          className="PlayButton"
+                        >
+                          <TbPlayerPlayFilled />
+                        </button>
+                
+                      <p>{song.track.name}</p>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
         </div>
       )}
+      <ToastContainer />
     </>
   );
 }
