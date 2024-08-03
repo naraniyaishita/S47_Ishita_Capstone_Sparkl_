@@ -10,6 +10,7 @@ import Blogs from './components/Pages/Blogs';
 import Bookshelf from './components/Pages/Bookshelf';
 import Watchlist from './components/Pages/Watchlist';
 import Blog from './components/Pages/Blog';
+import About from './components/Pages/About';
 
 import AddBlog from './components/Pages/AddBlog';
 import AddBook from './components/Pages/AddBook';
@@ -38,7 +39,7 @@ const routes = [
   { path: "/watchlist/add", element: <AddWatch /> },
   { path: "/watchlist/:id/edit", element: <EditWatch /> },
   { path: "/google-success", element: <GoogleSuccess /> },
-  
+  { path: "/about", element: <About /> },
 ];
 
 function App() {

@@ -7,7 +7,7 @@ const pages = [
   { name: "Bookshelf", path: "/bookshelf" },
   { name: "Watchlist", path: "/watchlist" },
   { name: "Blogs", path: "/blogs" },
-  { name: "Profile", path: "/home" }, 
+  { name: "About", path: "/about" }, 
 ];
 
 function Navbar() {
