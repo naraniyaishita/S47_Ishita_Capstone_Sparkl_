@@ -27,14 +27,13 @@ function EditWatch() {
       setWhereTo(res.data.whereTo)
       
     })
-    .catch(err => console.log(err))
+    .catch()
   }, [id])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.put(`${import.meta.env.VITE_SERVER}/watchList/update/${id}`, {title, type, coverImageURL, genre, whereTo});
-      console.log(response.data);
 
       navigate('/watchlist')
 
