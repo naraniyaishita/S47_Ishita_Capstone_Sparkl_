@@ -15,40 +15,35 @@ router.get('/:userId', async (req, res) => {
   }
 });
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "./uploads");
-  },
-  filename: (req, file, cb) => {
-    cb(null, `image-${Date.now()}.${file.originalname}`);
-  },
-});
-
-const upload = multer({ storage: storage })
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 router.post("/", upload.array("photos", 12), async (req, res) => {
   if (!req.files || req.files.length === 0) {
     return res.status(400).json({ message: "No files were uploaded." });
   }
+
   try {
-    const uploadPromises = req.files.map((file) => UploadonCloudinary(file.path));
+    const uploadPromises = req.files.map((file) => UploadonCloudinary(file.buffer));
     const uploadResults = await Promise.all(uploadPromises);
     const imagepaths = uploadResults.map((result) => result.secure_url);
-    const {userId,title,content,tags, createdDate, updatedDate } = req.body;
 
-    
+    const { userId, title, content, tags, createdDate, updatedDate } = req.body;
+
     const blogdata = new BlogModal({
-      userId : userId,
-      title:   title,
-      content : content,
-      tags:tags,
+      userId,
+      title,
+      content,
+      tags,
       imagepath: imagepaths,
-      createdDate: createdDate,
-      updatedDate: updatedDate,
+      createdDate,
+      updatedDate,
     });
+
     await blogdata.save();
     res.status(200).json(blogdata);
   } catch (error) {
+    console.error(error);
     res.status(400).json(error);
   }
 });
