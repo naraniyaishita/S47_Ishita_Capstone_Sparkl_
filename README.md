@@ -26,8 +26,6 @@ Built-in blog: Share your thoughts, experiences, and memories with text and phot
 
 Frontend Deployed Link :- [https://sparkl.pages.dev]
 
-Backend Deployed Link :- [https://sparkl.onrender.com]
-
 ## Daily Plan
 
 1. Intialising GitHub Repository, adding README file for a brief introduction to the Project.
