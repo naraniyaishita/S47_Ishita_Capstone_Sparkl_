@@ -84,31 +84,26 @@ function Spotify() {
         type: searchType,
       },
     });
-    // console.log(data);
     const searchResults = data[`${searchType}s`].items;
     setSearchData(searchResults);
   };
   const renderSearchResults = () => {
     return SearchData.map((data) => (
       <div key={data.id} className="searchItem">
-      
-          <button
+        <button
           style={{
-            backgroundImage: `url(${
-              data.album ? data.album.images[2].url : data.images[2].url
-            })`,
+            backgroundImage: `url(${data.album.images[2].url})`,
           }}
-            onClick={() => playSelectedItem(data.uri, searchType)}
-            className="PlayButton"
-          >
-            <TbPlayerPlayFilled />
-          </button>
-       
+          onClick={() => playSelectedItem(data.uri, searchType)}
+          className="PlayButton"
+        >
+          <TbPlayerPlayFilled />
+        </button>
+
         <div>
-        <p>{data.name}</p>
-        <p>{data.artists[0].name}</p>
+          <p>{data.name}</p>
+          <p>{data.artists[0].name}</p>
         </div>
-        
       </div>
     ));
   };
@@ -127,7 +122,6 @@ function Spotify() {
         }
       );
       setTopArtists(response.data.items);
-      // console.log(response.data.items);
     } catch (error) {
       console.error("Failed to fetch top artists:", error);
     } finally {
@@ -156,9 +150,7 @@ function Spotify() {
             },
           }
         );
-        // console.log(response.data);
         songData = songData.concat(response.data.items);
-        // console.log(songData);
         offset += 20;
         hasMore = response.data.next !== null;
       } catch (error) {
@@ -168,7 +160,6 @@ function Spotify() {
     }
     setIsLikedLoading(false);
     setLikedSongData(songData);
-    // console.log(likedSongData);
   };
 
   //Playbacks
@@ -185,7 +176,6 @@ function Spotify() {
           },
         }
       );
-      console.log("Paused");
     } catch (error) {
       console.error("Failed to pause", error);
     }
@@ -202,7 +192,6 @@ function Spotify() {
           },
         }
       );
-      console.log("Playing");
     } catch (error) {
       console.error("Failed to play", error);
     }
@@ -218,12 +207,11 @@ function Spotify() {
           },
         }
       );
-      console.log("Next");
     } catch (error) {
       console.error("Failed to next", error);
     }
   };
-  
+
   //Previous
   const Previous = async () => {
     try {
@@ -236,7 +224,6 @@ function Spotify() {
           },
         }
       );
-      console.log("Previous");
     } catch (error) {
       console.error("Failed to previous", error);
     }
@@ -254,7 +241,6 @@ function Spotify() {
           },
         }
       );
-      console.log("Shuffle");
     } catch (error) {
       console.error("Failed to shuffle", error);
     }
@@ -332,7 +318,6 @@ function Spotify() {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
       setIsPlaying(response.data.is_playing);
     } catch (error) {
       console.error("Failed to get player state", error);
@@ -351,7 +336,6 @@ function Spotify() {
     setToken("");
     window.sessionStorage.removeItem("Spotifytoken");
   };
-
 
   return (
     <>
@@ -416,7 +400,7 @@ function Spotify() {
           </div>
           <div className="SpotifyData">
             {/* Spotify Search */}
-            <div className="SpotifySearch"> 
+            <div className="SpotifySearch">
               <form onSubmit={searchItems} className="SearchFormSpotify">
                 <div className="SearchInputSpotify">
                   <select
@@ -433,9 +417,12 @@ function Spotify() {
                   <button type={"submit"}>Search</button>
                 </div>
               </form>
-              <div className="searchResultsSpotify">
-                {renderSearchResults()}
-              </div>
+
+              {searchKey && renderSearchResults()?.length > 0 && (
+                <div className="searchResultsSpotify">
+                  {renderSearchResults()}
+                </div>
+              )}
             </div>
             {/* Spotify Top Artist */}
             <div className="SpotifyTop">
@@ -458,17 +445,15 @@ function Spotify() {
                 <div className="LikedSongsContainer">
                   {likedSongData.map((song, index) => (
                     <div key={index} className="LikedSong">
-                      
-                        <button
+                      <button
                         style={{
                           backgroundImage: `url(${song.track.album.images[2].url})`,
                         }}
-                          onClick={() => playSelectedItem(song.track.uri)}
-                          className="PlayButton"
-                        >
-                          <TbPlayerPlayFilled />
-                        </button>
-                
+                        onClick={() => playSelectedItem(song.track.uri)}
+                        className="PlayButton"
+                      >
+                        <TbPlayerPlayFilled />
+                      </button>
                       <p>{song.track.name}</p>
                     </div>
                   ))}

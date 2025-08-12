@@ -27,7 +27,6 @@ function AddWatch() {
         const newResults = response.data.Search || [];
         setSearchResult(newResults);
       } else {
-        console.log("No results found");
         setNoResult(true);
       }
     } catch (error) {

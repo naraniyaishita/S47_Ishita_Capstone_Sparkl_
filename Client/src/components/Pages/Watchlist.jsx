@@ -30,7 +30,7 @@ function Watchlist() {
       .then((datas) => {setDatas(datas.data)
         setLoading(false);
       })
-      .catch((err) => {console.log(err)
+      .catch((err) => {
         setLoading(false);
       });
   }, [userId]);
@@ -51,7 +51,6 @@ function Watchlist() {
             window.location.reload();
           });
       } catch (error) {
-        console.log(error);
       }
     };
   return  username && username.length > 0 ? (
