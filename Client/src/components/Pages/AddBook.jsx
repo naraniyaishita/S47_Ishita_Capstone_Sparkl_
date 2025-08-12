@@ -20,7 +20,6 @@ function AddBook() {
     try {
       const response = await axios.get(`https://openlibrary.org/search.json?title=${searchTerm}`);
       setResults(response.data.docs);
-      console.log(response.data.docs);
     } catch (error) {
       toast.error("Error fetching data")
       console.error('Error fetching data: ', error);

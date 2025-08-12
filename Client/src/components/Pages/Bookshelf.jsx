@@ -23,8 +23,7 @@ function BookShelf() {
         setBooks(books.data)
         setLoading(false);
       })
-      .catch((err) =>{ 
-        console.log(err)
+      .catch((err) =>{
         setLoading(false);
       });
   }, [userId]);
@@ -37,7 +36,6 @@ function BookShelf() {
       })
       
     } catch (error) {
-      console.log(error);
       toast.error("Failed to delete book. Please try again.", {});
     }
   };
@@ -47,7 +45,6 @@ function BookShelf() {
       await axios.put(`${import.meta.env.VITE_SERVER}/books/update/${bookId}`, { wantTo: newStatus });
       setBooks(Books.map(book => book._id === bookId ? { ...book, wantTo: newStatus } : book));
     } catch (error) {
-      console.log(error);
       toast.error("Error encountered while updating book status. Please try again.")
     }
  };

@@ -1,5 +1,4 @@
-import express from "express";
-import { Router } from "express";
+import express, { Router } from "express";
 import multer from "multer";
 import BlogModal from "../Schemas/blogs.schema.js";
 const router = Router()

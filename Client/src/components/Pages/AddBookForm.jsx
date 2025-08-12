@@ -41,7 +41,6 @@ function AddBookForm() {
       };
 
       const response = await axios.post(`${import.meta.env.VITE_SERVER}/books`, postData);
-      console.log(response.data);
       toast.success("Book added successfully!");
       setTimeout(()=>{
         navigate('/bookshelf')
