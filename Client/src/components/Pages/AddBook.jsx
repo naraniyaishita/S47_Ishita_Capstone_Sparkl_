@@ -41,37 +41,39 @@ function AddBook() {
   const handleAdd =(book) => {
     navigate('/books/add/form', {state :{book}})
   }
-  
-  return  username && username.length > 0 ?(
-    <div >
-      <ToastContainer style={{width: '30vw', height:'14vh'}} autoClose={3000}/>
-      <form onSubmit={handleSearch} className='addSearch'>
-        <input
-          type="text"
-          placeholder="Search for a book"
-          value={searchTerm}
-          onChange={handleInputChange}
-        />
-        <button type="submit">Search</button>
-      </form>
-      {loading ? ( 
-        <div className='loadingMessage'>Searching for your book...</div>
-      ) : (
-        <div className='searchResults'>
-          {results.map((book) => (
-            <div key={book.key} className='searchResult'>
-              <img 
-                src={ book.cover_i ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg` : bookCover}  
-                alt={book.title}
-              />
-              <h3>{book.title}</h3>
-              <button onClick={() => handleAdd(book)}>Add</button>
-            </div>
-          ))}
+    return username && username.length > 0 ? (
+        <div>
+            <ToastContainer style={{width: '30vw', height:'14vh'}} autoClose={3000}/>
+            <form onSubmit={handleSearch} className='addSearch'>
+                <input
+                    type="text"
+                    placeholder="Search for a book"
+                    value={searchTerm}
+                    onChange={handleInputChange}
+                />
+                <button type="submit">Search</button>
+            </form>
+            {loading ? (
+                <div className='loadingMessage'>Searching for your book...</div>
+            ) : (
+                <div className='searchResults'>
+                    {results.map((book) => (
+                        <div key={book.key} className='searchResult'>
+                            <img
+                                src={book.cover_i ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg` : bookCover}
+                                alt={book.title}
+                            />
+                            <h3 title={book.title}>{
+                                book.title.length > 50
+                                    ? book.title.substring(0, 50) + '...'
+                                    : book.title
+                            }</h3>
+                            <button onClick={() => handleAdd(book)}>Add</button>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
-      )}
-    </div>
-  ):<Loginfirst/>
-}
+    ) : <Loginfirst/>}
 
 export default AddBook

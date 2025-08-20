@@ -1,176 +1,789 @@
+/* ============================================================================
+   SPOTIFY COMPONENT COMPREHENSIVE STYLES
+   Modern styling to match your application design
+============================================================================ */
+
+:root {
+    --spotify-green: #1db954;
+    --spotify-black: #191414;
+    --spotify-dark-gray: #121212;
+    --spotify-light-gray: #b3b3b3;
+    --spotify-white: #ffffff;
+    --primary-purple: #6c5ce7;
+    --secondary-purple: #a29bfe;
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --shadow-main: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --border-radius: 15px;
+}
+
+/* ============================================================================
+   MAIN SPOTIFY CONTAINER
+============================================================================ */
+
 .Spotify {
-  border: 2px solid black;
-  margin: 1vh;
-  padding: 1vh;
-  border-radius: 20px;
-  background-color: #c49ddc;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Circular', 'Helvetica Neue', Arial, sans-serif;
+    color: var(--spotify-white);
 }
+
+/* ============================================================================
+   HEADER SECTION
+============================================================================ */
+
 .App-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 1rem;
+    background: linear-gradient(135deg, var(--spotify-black), var(--spotify-dark-gray));
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-main);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 .SpotifyLogo {
-  height: 4rem;
+    height: 60px;
+    width: auto;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
 }
-.Spotify header {
-  text-align: center;
+
+.SpotifyLogo:hover {
+    transform: scale(1.05);
 }
-.SpotifyData {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 1rem;
-}
-.SpotifyPlayer {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-.SpotifyLiked {
-  width: 25vw;
-}
-.SpotifyGetButton {
-  display: flex;
-  justify-content: center;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 7rem;
-  background-color: #000;
-  color: #c49ddc;
-  font-size: 1rem;
-}
-.SpotifyButtons {
-  display: flex;
-  justify-content: space-around;
-}
-.SpotifyButtons button {
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 7rem;
-  background-color: #000;
-  color: #c49ddc;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
+
 .SpotifyLoginButton,
 .SpotifyLogoutButton {
-  border: none;
-  padding: 0.5rem 2rem;
-  border-radius: 5rem;
-  background-color: #000;
-  color: #c49ddc;
-  font-size: 0.8rem;
+    background: linear-gradient(135deg, var(--spotify-green), #1ed760);
+    color: var(--spotify-white);
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
 }
+
 .SpotifyLoginButton a {
-  text-decoration: none;
-  color: #c49ddc;
+    color: inherit;
+    text-decoration: none;
+}
+
+.SpotifyLoginButton:hover,
+.SpotifyLogoutButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
+}
+
+.SpotifyLoginButton:active,
+.SpotifyLogoutButton:active {
+    transform: translateY(0);
+}
+
+/* ============================================================================
+   SPOTIFY PLAYER CONTROLS
+============================================================================ */
+
+.SpotifyButtons {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    margin: 2rem;
+    padding: 2rem;
+    border-radius: 25px;
+    box-shadow: var(--shadow-main);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.SpotifyPlayer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    min-width: 250px;
+    justify-content: flex-start;
+}
+
+.SpotifyPlayer button {
+    background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.SpotifyPlayer button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
 }
 
 .CurrentSong {
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  justify-content: center;
+    background: linear-gradient(135deg, var(--spotify-dark-gray), var(--spotify-black));
+    color: var(--spotify-white);
+    padding: 1rem 1.5rem;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-width: 200px;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.LikedSongsContainer {
-  max-height: 50vh;
-  overflow-y: auto;
-  border: 1px solid #ccc;
+.SpotifyButtons > button {
+    background: linear-gradient(135deg, var(--spotify-black), var(--spotify-dark-gray));
+    color: var(--spotify-white);
+    border: none;
+    padding: 1rem;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.SpotifyLiked .LikedSong {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin: 10px 0;
+
+.SpotifyButtons > button:hover {
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border-color: var(--spotify-green);
+}
+
+.SpotifyButtons > button:active {
+    transform: translateY(-1px) scale(1.05);
+}
+
+/* ============================================================================
+   SPOTIFY DATA SECTION
+============================================================================ */
+
+.SpotifyData {
+    margin: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+    min-height: 60vh;
+}
+
+/* ============================================================================
+   SPOTIFY SEARCH SECTION
+============================================================================ */
+
+.SpotifySearch {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    box-shadow: var(--shadow-main);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.SearchFormSpotify {
+    width: 100%;
+}
+
+.SearchInputSpotify {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.SearchInputSpotify select {
+    padding: 0.8rem 1rem;
+    border: 2px solid rgba(108, 92, 231, 0.2);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background: white;
+    color: var(--spotify-dark-gray);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.SearchInputSpotify select:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+}
+
+.SearchInputSpotify input {
+    padding: 1rem 1.2rem;
+    border: 2px solid rgba(108, 92, 231, 0.2);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background: white;
+    color: var(--spotify-dark-gray);
+    transition: all 0.3s ease;
+}
+
+.SearchInputSpotify input:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+}
+
+.SearchInputSpotify input::placeholder {
+    color: var(--spotify-light-gray);
+    font-style: italic;
+}
+
+.SearchInputSpotify button {
+    background: linear-gradient(135deg, var(--spotify-green), #1ed760);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
+}
+
+.SearchInputSpotify button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
+}
+
+.searchResultsSpotify {
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding-right: 0.5rem;
+}
+
+/* Custom scrollbar */
+.searchResultsSpotify::-webkit-scrollbar {
+    width: 6px;
+}
+
+.searchResultsSpotify::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.searchResultsSpotify::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+    border-radius: 3px;
+}
+
+.searchItem {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--spotify-dark-gray);
+}
+
+.searchItem:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background: white;
 }
 
 .PlayButton {
-  width: 4rem;
-  height: 4rem;
-  color: rgba(255, 255, 255, 0);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
-  border-radius: 10px;
-  transition: background-color 0.3s ease, color 0.3s ease
-  
-}
-.PlayButton:hover{
-  color: rgba(255, 255, 255, 1);
-  /* background-color: #000; */
-  background-color: rgba(0, 0, 0, 0.5);
- 
-}
-
-
-.SearchInputSpotify {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  width: 25rem;
-  height: 2rem;
-  border-radius: 20px;
-  border: 1px solid black;
-}
-.SearchInputSpotify button {
-  background-color: black;
-  color: #c49ddc;
-  border: none;
-
-  border-radius: 0 3rem 3rem 0;
-  height: 100%;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-}
-.SearchInputSpotify select {
-  background-color: black;
-  color: #c49ddc;
-  border: none;
-
-  border-radius: 3rem 0 0 3rem;
-  height: 100%;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-}
-/* .SearchInputSpotify select option:hover {
-  background-color: black;
-} */
-.SearchInputSpotify input {
-  background: none;
-  color: black;
-  border: none;
-  height: 100%;
-    width: 100%;
-  font-size: 1rem;
-  outline: none;
-  padding-left: 10px;
-}
-.searchResultsSpotify{
-    margin: 5px;
-    border: 1px solid black;
-    /* background-color: #262626; */
-    color: white;
-    border-radius: 10px;
-    padding: .1rem ;
-}
-.searchItem{
-    border: 1px solid white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background-size: cover;
+    background-position: center;
     display: flex;
-    background-color:rgb(0,0,0, .2);
-    margin: .3rem;
-    border-radius: 10px;
-    padding: .25rem;
-   
-    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
-.LikedSongsContainer:empty {
-  display: none;
+
+.PlayButton::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.PlayButton:hover::before {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.PlayButton svg {
+    color: white;
+    font-size: 1.2rem;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.PlayButton:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.searchItem p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+.searchItem p:first-of-type {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--spotify-black);
+}
+
+.searchItem p:last-of-type {
+    font-size: 0.9rem;
+    color: var(--spotify-light-gray);
+    margin-top: 0.2rem;
+}
+
+/* ============================================================================
+   TOP ARTISTS SECTION
+============================================================================ */
+
+.SpotifyTop {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    box-shadow: var(--shadow-main);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.SpotifyGetButton {
+    background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+    width: 100%;
+}
+
+.SpotifyGetButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+}
+
+.SpotifyTop > div:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    color: var(--spotify-dark-gray);
+}
+
+.SpotifyTop > div:last-child::-webkit-scrollbar {
+    width: 6px;
+}
+
+.SpotifyTop > div:last-child::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.SpotifyTop > div:last-child::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+    border-radius: 3px;
+}
+
+.SpotifyTop > div:last-child > div {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem 1.2rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--spotify-green);
+}
+
+.SpotifyTop > div:last-child > div:hover {
+    background: white;
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================================================
+   LIKED SONGS SECTION
+============================================================================ */
+
+.SpotifyLiked {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    box-shadow: var(--shadow-main);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.LikedSongsContainer {
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding-right: 0.5rem;
+}
+
+.LikedSongsContainer::-webkit-scrollbar {
+    width: 6px;
+}
+
+.LikedSongsContainer::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.LikedSongsContainer::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--spotify-green), #1ed760);
+    border-radius: 3px;
+}
+
+.LikedSong {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--spotify-dark-gray);
+    width: 100%;
+}
+
+.LikedSong:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background: white;
+}
+
+.LikedSong p {
+    margin: 0;
+    font-weight: 500;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ============================================================================
+   LOADING STATES
+============================================================================ */
+
+.SpotifyTop > div:first-of-type,
+.SpotifyLiked > div:first-of-type {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: var(--spotify-light-gray);
+    font-style: italic;
+    font-size: 1.1rem;
+}
+
+/* Loading animation */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.SpotifyTop > div:first-of-type,
+.SpotifyLiked > div:first-of-type {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+============================================================================ */
+
+@media (max-width: 1200px) {
+    .SpotifyData {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .SpotifySearch {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .Spotify {
+        padding: 0;
+    }
+
+    .App-header {
+        padding: 1.5rem;
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .SpotifyLogo {
+        height: 50px;
+    }
+
+    .SpotifyButtons {
+        margin: 1rem;
+        padding: 1.5rem;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .SpotifyPlayer {
+        justify-content: center;
+        min-width: unset;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .CurrentSong {
+        min-width: unset;
+        max-width: unset;
+        text-align: center;
+    }
+
+    .SpotifyData {
+        grid-template-columns: 1fr;
+        margin: 1rem;
+        gap: 1.5rem;
+    }
+
+    .SearchInputSpotify {
+        padding: 1rem;
+    }
+
+    .SpotifySearch,
+    .SpotifyTop,
+    .SpotifyLiked {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .App-header {
+        padding: 1rem;
+    }
+
+    .SpotifyButtons {
+        padding: 1rem;
+    }
+
+    .SpotifyButtons > button {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+
+    .SpotifyData {
+        margin: 0.5rem;
+    }
+
+    .SpotifySearch,
+    .SpotifyTop,
+    .SpotifyLiked {
+        padding: 1rem;
+        border-radius: 20px;
+    }
+
+    .PlayButton {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .searchItem,
+    .LikedSong {
+        padding: 0.8rem;
+        gap: 0.8rem;
+    }
+}
+
+/* ============================================================================
+   ENHANCED INTERACTIONS
+============================================================================ */
+
+.SpotifySearch::before,
+.SpotifyTop::before,
+.SpotifyLiked::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.SpotifySearch:hover::before,
+.SpotifyTop:hover::before,
+.SpotifyLiked:hover::before {
+    opacity: 1;
+}
+
+/* ============================================================================
+   SPOTIFY BRAND CONSISTENCY
+============================================================================ */
+
+.spotify-brand-accent {
+    color: var(--spotify-green);
+}
+
+.spotify-text-white {
+    color: var(--spotify-white);
+}
+
+.spotify-text-gray {
+    color: var(--spotify-light-gray);
+}
+
+/* ============================================================================
+   SECTION HEADERS (for better organization)
+============================================================================ */
+
+.SpotifySearch::after {
+    content: 'Search Music';
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.SpotifyTop::after {
+    content: 'Your Top Artists';
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    background: linear-gradient(135deg, var(--spotify-green), #1ed760);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.SpotifyLiked::after {
+    content: 'Liked Songs';
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    background: linear-gradient(135deg, #e74c3c, #fd79a8);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.SpotifySearch,
+.SpotifyTop,
+.SpotifyLiked {
+    position: relative;
+    margin-top: 1rem;
+}
+
+/* ============================================================================
+   FOCUS STATES FOR ACCESSIBILITY
+============================================================================ */
+
+.SearchInputSpotify select:focus-visible,
+.SearchInputSpotify input:focus-visible,
+.SearchInputSpotify button:focus-visible,
+.SpotifyGetButton:focus-visible,
+.SpotifyLoginButton:focus-visible,
+.SpotifyLogoutButton:focus-visible,
+.SpotifyPlayer button:focus-visible,
+.SpotifyButtons > button:focus-visible,
+.PlayButton:focus-visible {
+    outline: 3px solid var(--spotify-green);
+    outline-offset: 2px;
+}
+.topArtists{
+    width: 100%;
 }
