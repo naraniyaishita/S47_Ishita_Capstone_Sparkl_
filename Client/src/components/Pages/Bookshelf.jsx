@@ -53,14 +53,14 @@ function BookShelf() {
     <>
       <Navbar />
       
-      <h2 className="shelfTitle">
+      <div className="shelfTitle">
       <ToastContainer autoClose={2000} style={{width: '30vw', height:'14vh'}}/>
         <button className="AddBtn"  onClick={() => navigate('/books/add')}>
           {" "}
-          + ADD BOOK{" "}
+           ADD BOOK{" "}
         </button>
-        Your Book Shelf
-      </h2>
+        <h2>Your Book Shelf</h2>
+      </div>
 
       {loading ? (
         <div className="loading">
@@ -81,7 +81,7 @@ function BookShelf() {
                     />
                   </div>
                   <div className="bookInfo">
-                    <h3 className="bookTitle">{book.title} </h3>
+                    <di className="bookTitle">{book.title} </di>
                     <p className="bookAuthor">{book.author}</p>
                     <div className="bookGenreDiv">
                       {book.genres.map((genre, id) => (

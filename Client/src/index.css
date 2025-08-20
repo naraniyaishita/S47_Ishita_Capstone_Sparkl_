@@ -3,9 +3,8 @@
   padding: 0;
 }
 body {
-  background: rgb(194,195,243);
-  background: linear-gradient(225deg, rgba(194,195,243,1) 0%, rgba(201,184,218,1) 25%, rgba(237,196,214,1) 50%, rgba(255,220,226,1) 75%, rgba(255,234,229,1) 100%);
-  min-height: 100vh ;
+   background: linear-gradient(225deg, #fdfbfb 0%, #ebedee 25%, #dfe9f3 50%, #cfd9df 75%, #e2ebf0 100%);
+  min-height: 100vh;
 }
 button{
   cursor: pointer;

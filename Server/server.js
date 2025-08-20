@@ -51,7 +51,7 @@ mongoose
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "https://sparkl.onrender.com/auth/google/callback",
+          callbackURL: "https://sparkl.onrender.com/auth/google/callback",
         scope: ["email", "profile"],
       },
       async (accessToken, refreshToken, profile, done) => {

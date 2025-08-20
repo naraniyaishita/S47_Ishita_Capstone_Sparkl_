@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react'
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserContext from '../User/UserContext';
-
+import '../Styles/Add.css'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loginfirst from "../Loginfirst";
@@ -50,51 +50,36 @@ function AddBookForm() {
       toast.error("Failed to add book. Please try again.");
     }
   }
-  return username && username.length > 0 ?(
-    <div>
-      <form action="">
-        <label htmlFor="">Enter Book Title</label>
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <br />
-        <label htmlFor="">Enter Cover Image URL</label>
-        <input
-          type="text"
-          placeholder="Cover Image URL"
-          value={coverImageURL}
-          onChange={(e) => setCoverImageURL(e.target.value)}
-        />
-        <br />
-        <label htmlFor="">Enter Author</label>
-        <input
-          type="text"
-          placeholder="Author"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-        />
-        <br />
-        <label htmlFor="">Enter Genre (separated by commas)</label>
-        <input
-          type="text"
-          placeholder='Genre'
-          value={genreInput}
-          onChange={handleGenreInputChange} />
-        <br />
-        <label htmlFor="">Want to ?</label>
-        <select name="wantTo" id="" value={wantTo} onChange={(e) => setWantTo(e.target.value)}>
+  return username && username.length > 0 ? (
+  <div className="add-book-container">
+    <div className="add-book-card">
+      <h2>Add a New Book</h2>
+      <form>
+        <label>Enter Book Title</label>
+        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+
+        <label>Enter Cover Image URL</label>
+        <input type="text" value={coverImageURL} onChange={(e) => setCoverImageURL(e.target.value)} />
+
+        <label>Enter Author</label>
+        <input type="text" value={author} onChange={(e) => setAuthor(e.target.value)} />
+
+        <label>Enter Genre (separated by commas)</label>
+        <input type="text" value={genreInput} onChange={handleGenreInputChange} />
+
+        <label>Want to?</label>
+        <select value={wantTo} onChange={(e) => setWantTo(e.target.value)}>
           <option value="read">Read</option>
           <option value="already">Already</option>
           <option value="reading">Reading</option>
         </select>
-        <br />
+
         <button type="submit" onClick={handleSubmit}>Add Book</button>
       </form>
-      <ToastContainer style={{width: '30vw', height:'14vh'}}/>  
     </div>
-  ) : <Loginfirst/>
+    <ToastContainer style={{ width: '30vw', height: '14vh' }} />
+  </div>
+) : <Loginfirst />
+
 }
 export default AddBookForm
