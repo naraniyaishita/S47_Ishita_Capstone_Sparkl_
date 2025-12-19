@@ -13,18 +13,43 @@ import {
   TbRefresh,
 } from "react-icons/tb";
 
+function generateRandomString(length) {
+  const possible =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  return Array.from(crypto.getRandomValues(new Uint8Array(length)))
+    .map((x) => possible[x % possible.length])
+    .join("");
+}
+
+async function generateCodeChallenge(codeVerifier) {
+  const data = new TextEncoder().encode(codeVerifier);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return btoa(String.fromCharCode(...new Uint8Array(digest)))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
 function Spotify() {
   const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
   const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
+  const login = async () => {
+    const codeVerifier = generateRandomString(128);
+    const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-  const AUTH_ENDPOINT =
-    `https://accounts.spotify.com/authorize` +
-    `?client_id=${CLIENT_ID}` +
-    `&response_type=code` +
-    `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-    `&scope=streaming user-read-email user-read-private user-library-read user-library-modify user-read-playback-state user-modify-playback-state user-read-currently-playing user-top-read playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-follow-modify user-follow-read user-read-recently-played`;
-console.log("CLIENT_ID:", import.meta.env.VITE_CLIENT_ID);
-console.log("REDIRECT_URI:", import.meta.env.VITE_REDIRECT_URI);
+    sessionStorage.setItem("code_verifier", codeVerifier);
+
+    const authUrl =
+      `https://accounts.spotify.com/authorize` +
+      `?client_id=${CLIENT_ID}` +
+      `&response_type=code` +
+      `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+      `&code_challenge_method=S256` +
+      `&code_challenge=${codeChallenge}` +
+      `&scope=streaming user-read-email user-read-private user-library-read user-library-modify user-read-playback-state user-modify-playback-state user-read-currently-playing user-top-read playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-follow-modify user-follow-read user-read-recently-played`;
+
+    window.location.href = authUrl;
+  };
 
   const [token, setToken] = useState("");
 
@@ -45,25 +70,48 @@ console.log("REDIRECT_URI:", import.meta.env.VITE_REDIRECT_URI);
   const [activeDevice, setActiveDevice] = useState(null);
 
   //setToken
+
   useEffect(() => {
-    const hash = window.location.hash;
-    let token = window.sessionStorage.getItem("Spotifytoken");
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
 
-    if (!token && hash) {
-      token = hash
-        .substring(1)
-        .split("&")
-        .find((elem) => elem.startsWith("access_token"))
-        .split("=")[1];
+    const storedToken = sessionStorage.getItem("Spotifytoken");
 
-      window.location.hash = "";
-      window.sessionStorage.setItem("Spotifytoken", token);
-
-      window.history.replaceState(null, null, "/home");
+    if (storedToken) {
+      setToken(storedToken);
+      return;
     }
 
-    setToken(token);
+    if (!code) return;
+
+    const codeVerifier = sessionStorage.getItem("code_verifier");
+
+    axios
+      .post(
+        "https://accounts.spotify.com/api/token",
+        new URLSearchParams({
+          client_id: CLIENT_ID,
+          grant_type: "authorization_code",
+          code,
+          redirect_uri: REDIRECT_URI,
+          code_verifier: codeVerifier,
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      )
+      .then((res) => {
+        sessionStorage.setItem("Spotifytoken", res.data.access_token);
+        setToken(res.data.access_token);
+        window.history.replaceState({}, document.title, "/home");
+      })
+      .catch((err) => {
+        console.error("Token exchange failed", err);
+      });
   }, []);
+
   // Cheeking token validity
   const checkTokenValidity = async () => {
     try {
@@ -371,8 +419,8 @@ console.log("REDIRECT_URI:", import.meta.env.VITE_REDIRECT_URI);
                 className="SpotifyLogo"
               />{" "}
             </h1>
-            <button className="SpotifyLoginButton">
-              <a href={AUTH_ENDPOINT}>Login to Spotify</a>
+            <button onClick={login} className="SpotifyLoginButton">
+              Login to Spotify
             </button>
           </header>
         </div>
