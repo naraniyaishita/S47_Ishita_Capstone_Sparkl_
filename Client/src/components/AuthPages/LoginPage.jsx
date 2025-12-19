@@ -13,7 +13,7 @@ function LoginPage() {
     const handleLogin = async (e) => {
       e.preventDefault();
       try {
-        const response = await axios.post('https://sparkl.onrender.com/user/login', { name, email, password });
+        const response = await axios.post(`${import.meta.env.VITE_SERVER}/user/login`, { name, email, password });
         const { token, user } = response.data;
         setUserName(user.name);
         setUserEmail(user.email);
@@ -25,7 +25,8 @@ function LoginPage() {
       }
    }; 
    const loginWithGoogle = () => {
-    window.open('https://sparkl.onrender.com/auth/google/callback', '_self');
+    window.open(`${import.meta.env.VITE_SERVER}/auth/google`, '_self');
+    
  }
 
   return (

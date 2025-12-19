@@ -51,7 +51,7 @@ mongoose
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-          callbackURL: "https://sparkl.onrender.com/auth/google/callback",
+        callbackURL: `${process.env.SERVER_URL}/auth/google/callback`,
         scope: ["email", "profile"],
       },
       async (accessToken, refreshToken, profile, done) => {
@@ -91,11 +91,11 @@ mongoose
   );
   
   app.get("/auth/google/callback",
-    passport.authenticate("google", { failureRedirect: "https://sparkl.pages.dev/login" }),
+    passport.authenticate("google", { failureRedirect: `${process.env.CLIENT_URL}/login` }),
     (req, res) => {
       const token = jwt.sign({ userId: req.user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
   
-      res.redirect(`https://sparkl.pages.dev/google-success?token=${token}&userId=${req.user._id}&username=${req.user.name}&email=${req.user.email}`);
+      res.redirect(`${process.env.CLIENT_URL}/google-success?token=${token}&userId=${req.user._id}&username=${req.user.name}&email=${req.user.email}`);
     }
   );
   
