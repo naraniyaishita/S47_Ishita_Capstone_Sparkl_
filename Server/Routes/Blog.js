@@ -1,22 +1,20 @@
-import express, { Router } from "express";
+import { Router } from "express";
 import multer from "multer";
 import BlogModal from "../Schemas/blogs.schema.js";
-const router = Router()
 import UploadonCloudinary from "../config/cloudinary.js";
 
-router.get('/:userId', async (req, res) => {
-  const userId = req.params.userId;
+const router = Router();
+const upload = multer({ storage: multer.memoryStorage() });
+
+router.get("/", async (req, res) => {
   try {
-     const blog = await BlogModal.find({ userId: userId });
-     res.json(blog)
+    const blogs = await BlogModal.find({ userId: req.userId });
+    res.json(blogs);
   } catch (error) {
-     console.error(error);
-     res.status(500).send('Server error');
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 });
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
 
 router.post("/", upload.array("photos", 12), async (req, res) => {
   if (!req.files || req.files.length === 0) {
@@ -24,46 +22,53 @@ router.post("/", upload.array("photos", 12), async (req, res) => {
   }
 
   try {
-    const uploadPromises = req.files.map((file) => UploadonCloudinary(file.buffer));
-    const uploadResults = await Promise.all(uploadPromises);
-    const imagepaths = uploadResults.map((result) => result.secure_url);
+    const uploadResults = await Promise.all(
+      req.files.map((file) => UploadonCloudinary(file.buffer))
+    );
+    const imagepath = uploadResults.map((result) => result.secure_url);
+    const { title, content, tags, createdDate } = req.body;
 
-    const { userId, title, content, tags, createdDate, updatedDate } = req.body;
-
-    const blogdata = new BlogModal({
-      userId,
+    const blog = await BlogModal.create({
+      userId: req.userId,
       title,
       content,
       tags,
-      imagepath: imagepaths,
+      imagepath,
       createdDate,
-      updatedDate,
     });
-
-    await blogdata.save();
-    res.status(200).json(blogdata);
+    res.status(201).json(blog);
   } catch (error) {
     console.error(error);
-    res.status(400).json(error);
+    res.status(400).json({ message: "Unable to create blog" });
   }
 });
-router.get('/:_id', async (req, res) => {
-  const _id = req.params._id;
+
+router.get("/:id", async (req, res) => {
   try {
-     const blog = await BlogModal.find({_id : _id});
-     res.json(blog)
+    const blog = await BlogModal.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+    if (!blog) return res.status(404).json({ message: "Blog not found" });
+    res.json(blog);
   } catch (error) {
-     console.error(error);
-     res.status(500).send('Server error');
+    console.error(error);
+    res.status(400).json({ message: "Unable to find blog" });
   }
 });
 
-router.delete('/delete/:id', (req, res) => {
-  const id = req.params.id
-  BlogModal.findByIdAndDelete(id)
-      .then(item => res.json(item))
-      .catch(err => console.log(err));
-    
-})
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const blog = await BlogModal.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+    if (!blog) return res.status(404).json({ message: "Blog not found" });
+    res.json(blog);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Unable to delete blog" });
+  }
+});
 
-export default router
+export default router;

@@ -15,7 +15,7 @@ function AddWatchlistForm() {
     const [whereTo, setWhereTo] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const { username, userId } = useContext(UserContext);
+    const { isAuthenticated } = useContext(UserContext);
     const navigate = useNavigate();
 
     const handleGenreInputChange = (e) => {
@@ -31,7 +31,6 @@ function AddWatchlistForm() {
             const genreArray = genreInput.split(',').map(genre => genre.trim()).filter(genre => genre);
 
             const response = await axios.post(`${import.meta.env.VITE_SERVER}/watchList`, {
-                userId,
                 title: title.trim(),
                 coverImageURL: coverImageURL.trim(),
                 type,
@@ -51,7 +50,7 @@ function AddWatchlistForm() {
         navigate('/watchlist/add');
     };
 
-    return username && username.length > 0 ? (
+    return isAuthenticated ? (
         <>
             <Navbar />
             <div className="form-container-wrapper">

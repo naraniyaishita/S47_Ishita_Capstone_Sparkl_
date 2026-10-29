@@ -6,8 +6,8 @@ import "./Styles/Home.css";
 import Spotify from "./Pages/Spotify";
 import Loginfirst from "./Loginfirst";
 function HomePage() {
-  const { username } = useContext(UserContext);
-  return username && username.length > 0 ? (
+  const { username, isAuthenticated } = useContext(UserContext);
+  return isAuthenticated ? (
     <div>
       <Navbar />
       <h1 id="helloUser">Hello, {username} </h1>

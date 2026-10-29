@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
 import "./Styles/Nav.css";
+import UserContext from "./User/UserContext";
 
 const pages = [
   { name: "Home", path: "/home" },
@@ -11,6 +13,16 @@ const pages = [
 
 function Navbar() {
   const navigate = useNavigate();
+  const { setUserName, setUserEmail, setUserId, setToken } = useContext(UserContext);
+
+  const logout = () => {
+    sessionStorage.clear();
+    setUserName("");
+    setUserEmail("");
+    setUserId("");
+    setToken("");
+    navigate("/login");
+  };
 
   return (
     <nav className="nav" role="navigation" aria-label="Main Navigation">
@@ -27,6 +39,9 @@ function Navbar() {
             {page.name}
           </button>
         ))}
+        <button onClick={logout} className="logoutButton">
+          Logout
+        </button>
       </div>
     </nav>
   );

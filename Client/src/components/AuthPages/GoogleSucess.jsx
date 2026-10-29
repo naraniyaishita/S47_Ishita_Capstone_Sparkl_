@@ -4,7 +4,7 @@ import UserContext from '../User/UserContext';
 
 const GoogleSuccess = () => {
   const navigate = useNavigate();
-  const { setUserName, setUserEmail, setUserId } = useContext(UserContext);
+  const { setUserName, setUserEmail, setUserId, setToken } = useContext(UserContext);
   const hasRun = useRef(false);
 
   useEffect(() => {
@@ -23,6 +23,7 @@ const GoogleSuccess = () => {
 
     if (token) {
       sessionStorage.setItem('token', token);
+      setToken(token);
       sessionStorage.setItem('userId', userId);
       sessionStorage.setItem('username', username);
       sessionStorage.setItem('useremail', email);

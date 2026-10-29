@@ -10,12 +10,12 @@ function Blog() {
   const [Blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const { username, userId } = useContext(UserContext);
+  const { isAuthenticated } = useContext(UserContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_SERVER}/blog/${userId}`)
+      .get(`${import.meta.env.VITE_SERVER}/blog`)
       .then((blogs) => {
         setBlogs(blogs.data);
         setLoading(false);
@@ -23,7 +23,7 @@ function Blog() {
       .catch((err) => {
         setLoading(false);
       });
-  }, [userId]);
+  }, []);
 
   function formatDate(dateString) {
     const formattedDate = new Date(dateString);
@@ -73,7 +73,7 @@ function Blog() {
     );
   }
 
-  return username && username.length > 0 ? (
+  return isAuthenticated ? (
     <>
       <div className="Blog">
         <div className="blog-top">

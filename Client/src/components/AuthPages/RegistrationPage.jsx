@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import "../Styles/Register.css"
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function RegistrationPage() {
   const navigate = useNavigate()
@@ -13,11 +15,12 @@ function RegistrationPage() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(`${import.meta.env.VITE_SERVER}/user/register`, { name, email, password });
+      await axios.post(`${import.meta.env.VITE_SERVER}/user/register`, { name, email, password });
   
       navigate('/login');
-    } catch (error) {   
+    } catch (error) {
       console.error(error);
+      toast.error(error.response?.data?.message || 'Unable to create account');
     }
  };
  const loginWithGoogle = () => {
@@ -31,7 +34,7 @@ function RegistrationPage() {
       <form className='RegisterForm' onSubmit={handleRegister}>
 
         <div>
-          <button className='googleBtn' onClick={loginWithGoogle}>CONTINUE WITH GOOGLE </button>
+          <button type="button" className='googleBtn' onClick={loginWithGoogle}>CONTINUE WITH GOOGLE </button>
         </div>
         <div>
           <label> Username : </label>
@@ -48,11 +51,12 @@ function RegistrationPage() {
         <div>
 
           <p>Already have an account?
-            <button className='loginBtn' onClick={() => navigate('/login')}>Login</button></p>
+            <button type="button" className='loginBtn' onClick={() => navigate('/login')}>Login</button></p>
 
         </div>
 
       </form>
+      <ToastContainer position="top-right" />
     </div>
   )
 }

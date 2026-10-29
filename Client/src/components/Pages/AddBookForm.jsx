@@ -17,7 +17,7 @@ function AddBookForm() {
   const [wantTo, setWantTo] = useState("read");
   const [genreInput, setGenreInput] = useState('');
 
-  const { username,userId } = useContext(UserContext);
+  const { isAuthenticated } = useContext(UserContext);
 
   const navigate = useNavigate();
   
@@ -32,7 +32,6 @@ function AddBookForm() {
       const genreArray = genreInput.split(',').map(genre => genre.trim());
 
       const postData = {
-        userId,
         title,
         coverImageURL,
         author,
@@ -50,7 +49,7 @@ function AddBookForm() {
       toast.error("Failed to add book. Please try again.");
     }
   }
-  return username && username.length > 0 ? (
+  return isAuthenticated ? (
   <div className="add-book-container">
     <div className="add-book-card">
       <h2>Add a New Book</h2>

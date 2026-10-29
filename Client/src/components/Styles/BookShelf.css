@@ -4,6 +4,39 @@
   position: relative;
 }
 
+.book-empty-state {
+  min-height: 55vh;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.8rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.book-empty-state h2 {
+  margin: 0;
+  color: #4b0082;
+  font-size: 2rem;
+}
+
+.book-empty-state p {
+  margin: 0;
+  color: #667085;
+  font-size: 1.05rem;
+}
+
+.book-empty-state button {
+  margin-top: 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.8rem 1.4rem;
+  color: #fff;
+  background: var(--gradient);
+  font-weight: 700;
+  cursor: pointer;
+}
+
 /* Title */
 .shelfTitle {
   text-align: center;

@@ -57,3 +57,8 @@ nav {
     box-shadow: none;
     transform: scale(.95); 
 }
+
+.linkButton .logoutButton {
+    border-color: #ffd1d1;
+    color: #fff1f1;
+}

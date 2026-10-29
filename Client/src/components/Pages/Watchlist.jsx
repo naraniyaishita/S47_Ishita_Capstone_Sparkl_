@@ -13,7 +13,7 @@ function Watchlist() {
     const [selectedPlatform, setSelectedPlatform] = useState("All");
     const [datas, setDatas] = useState([]);
     const [loading, setLoading] = useState(true);
-    const {username, userId} = useContext(UserContext);
+    const {isAuthenticated} = useContext(UserContext);
 
 
     const handleSearchInputChange = (e) => {
@@ -26,7 +26,7 @@ function Watchlist() {
 
     useEffect(() => {
         axios
-            .get(`${import.meta.env.VITE_SERVER}/watchList/${userId}`)
+            .get(`${import.meta.env.VITE_SERVER}/watchList`)
             .then((datas) => {
                 setDatas(datas.data)
                 setLoading(false);
@@ -34,7 +34,7 @@ function Watchlist() {
             .catch((err) => {
                 setLoading(false);
             });
-    }, [userId]);
+    }, []);
 
     const filteredWatchList = datas
         .filter((item) =>
@@ -54,7 +54,7 @@ function Watchlist() {
         } catch (error) {
         }
     };
-    return username && username.length > 0 ? (
+    return isAuthenticated ? (
         <>
             <Navbar/>
             <div className="watchlist-container">

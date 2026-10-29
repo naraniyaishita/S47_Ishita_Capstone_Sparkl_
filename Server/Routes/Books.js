@@ -1,36 +1,55 @@
-import express from "express";
 import { Router } from "express";
 import BookModal from "../Schemas/books.schema.js";
-const router = Router()
 
-router.get("/:userId", async (req, res) => {
-  const userId = req.params.userId;
+const router = Router();
+
+router.get("/", async (req, res) => {
   try {
-    const books = await BookModal.find({ userId: userId });
+    const books = await BookModal.find({ userId: req.userId });
     res.json(books);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Server error");
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-router.post('/', (req, res) => {
-    BookModal.create(req.body)
-      .then(item => res.json(item))
-      .catch(err => console.log(err));
-})
+router.post("/", async (req, res) => {
+  try {
+    const book = await BookModal.create({ ...req.body, userId: req.userId });
+    res.status(201).json(book);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Unable to create book" });
+  }
+});
 
-router.put('/update/:id' , (req, res) => {
-    const id = req.params.id
-    BookModal.findByIdAndUpdate(id, req.body)
-      .then(item => res.json(item))
-      .catch(err => console.log(err));
-})
+router.put("/update/:id", async (req, res) => {
+  try {
+    const book = await BookModal.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
+    if (!book) return res.status(404).json({ message: "Book not found" });
+    res.json(book);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Unable to update book" });
+  }
+});
 
-router.delete('/delete/:id', (req, res) => {
-    BookModal.findByIdAndDelete(req.params.id)
-      .then(item => res.json(item))
-      .catch(err => console.log(err));
-})  
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const book = await BookModal.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+    if (!book) return res.status(404).json({ message: "Book not found" });
+    res.json(book);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Unable to delete book" });
+  }
+});
 
-export default router
+export default router;
