@@ -14,11 +14,11 @@ function BookShelf() {
   const navigate = useNavigate();
   const [Books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { username,userId } = useContext(UserContext);
+  const { isAuthenticated } = useContext(UserContext);
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_SERVER}/books/${userId}`)
+      .get(`${import.meta.env.VITE_SERVER}/books`)
       .then((books) => {
         setBooks(books.data)
         setLoading(false);
@@ -26,7 +26,7 @@ function BookShelf() {
       .catch((err) =>{
         setLoading(false);
       });
-  }, [userId]);
+  }, []);
   const handleDelete = async (id) => {
     try {
       await axios.delete(`${import.meta.env.VITE_SERVER}/books/delete/${id}`).then(res => {
@@ -49,7 +49,7 @@ function BookShelf() {
     }
  };
 
-  return  username && username.length > 0 ?(
+  return isAuthenticated ?(
     <>
       <Navbar />
       
@@ -67,6 +67,13 @@ function BookShelf() {
           <p>Loading books...</p>
         </div>
       ) : (
+        Books.length === 0 ? (
+          <div className="book-empty-state">
+            <h2>Your bookshelf is empty</h2>
+            <p>Start building your collection by adding books you want to read</p>
+            <button onClick={() => navigate('/books/add')}>Add Your First Book</button>
+          </div>
+        ) : (
         <div className="bookShelf">
           <div className="shelf">
             <h2 className="shelfSubTitle">Currently Reading</h2>
@@ -209,6 +216,7 @@ function BookShelf() {
             </div>
           </div>
         </div>
+        )
       )}
     </>
   ) : <Loginfirst />;

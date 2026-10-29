@@ -10,11 +10,11 @@ function BlogsPage() {
   const navigate = useNavigate();
   const [Blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { username, userId } = useContext(UserContext);
+  const { isAuthenticated } = useContext(UserContext);
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_SERVER}/blog/${userId}`)
+      .get(`${import.meta.env.VITE_SERVER}/blog`)
       .then((blogs) => {
         setBlogs(blogs.data);
         setLoading(false);
@@ -22,7 +22,7 @@ function BlogsPage() {
       .catch((err) => {
         setLoading(false);
       });
-  }, [userId]);
+  }, []);
 
   function formatDate(dateString) {
     const formattedDate = new Date(dateString);
@@ -33,7 +33,7 @@ function BlogsPage() {
     });
   }
 
-  return username && username.length > 0 ? (
+  return isAuthenticated ? (
     <>
       <div className="blogs-page-container">
         <Navbar />

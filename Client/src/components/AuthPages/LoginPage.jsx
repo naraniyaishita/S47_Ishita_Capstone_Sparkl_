@@ -2,10 +2,12 @@ import React, { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import UserContext from '../User/UserContext'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function LoginPage() {
     const navigate = useNavigate()
-    const { setUserName, setUserEmail, setUserId } = useContext(UserContext);
+    const { setUserName, setUserEmail, setUserId, setToken } = useContext(UserContext);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -15,6 +17,8 @@ function LoginPage() {
       try {
         const response = await axios.post(`${import.meta.env.VITE_SERVER}/user/login`, { name, email, password });
         const { token, user } = response.data;
+        sessionStorage.setItem('token', token);
+        setToken(token);
         setUserName(user.name);
         setUserEmail(user.email);
         setUserId(user._id);
@@ -22,6 +26,7 @@ function LoginPage() {
         navigate('/home');
       } catch (error) {
         console.error(error);
+        toast.error(error.response?.data?.message || 'Invalid email or password');
       }
    }; 
    const loginWithGoogle = () => {
@@ -35,7 +40,7 @@ function LoginPage() {
     <h2>Login</h2>
     <form className='RegisterForm' onSubmit={handleLogin}>
       <div>
-        <button className='googleBtn' onClick={loginWithGoogle}>CONTINUE WITH GOOGLE </button>
+        <button type="button" className='googleBtn' onClick={loginWithGoogle}>CONTINUE WITH GOOGLE </button>
       </div>
       <div>
         <label> Username : </label> 
@@ -50,9 +55,10 @@ function LoginPage() {
       </div>
       <div>
         <p> Don't have an account?
-          <button className='RegisterBtn' onClick={() => navigate('/register')}>Register</button></p>
+          <button type="button" className='RegisterBtn' onClick={() => navigate('/register')}>Register</button></p>
       </div>
     </form>
+    <ToastContainer position="top-right" />
   </div>
   )
 }

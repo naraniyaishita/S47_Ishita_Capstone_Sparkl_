@@ -8,6 +8,7 @@ import UserRoute from './Routes/User.js'
 import BookRoute from './Routes/Books.js'
 import BlogRoute from './Routes/Blog.js'
 import WatchListRoute from './Routes/Watchlist.js'
+import authenticateToken from "./middleware/auth.js";
 
 import session from "express-session";
 import passport from "passport";
@@ -26,16 +27,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Sparkl Server!");
 });
 
-mongoose
-  .connect(process.env.MONGOOSE_CONNECTION, { dbName: "Sparkl" })
-  .then(() => {
-    console.log("MongoDB connected successfully");
-  })
-  .catch((err) => {
-    console.error("Error connecting to MongoDB:", err);
-  });
-
-  app.use(
+app.use(
     session({
       secret: process.env.CLIENT_SECRET_GOOGLE,
       resave: false,
@@ -43,8 +35,8 @@ mongoose
     })
   );
   
-  app.use(passport.initialize());
-  app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
   
   passport.use(
     new OAuth2Strategy(
@@ -101,11 +93,24 @@ mongoose
   
   
 
-  app.use('/user',UserRoute)
-  app.use('/blog', BlogRoute)
-  app.use('/books', BookRoute)
-  app.use('/watchList', WatchListRoute)
+app.use('/user', UserRoute)
+app.use('/blog', authenticateToken, BlogRoute)
+app.use('/books', authenticateToken, BookRoute)
+app.use('/watchList', authenticateToken, WatchListRoute)
 
-app.listen(2004, () => {
-  console.log("🚀 Server is running");
-});
+export async function startServer() {
+  await mongoose.connect(process.env.MONGOOSE_CONNECTION, { dbName: "Sparkl" });
+  console.log("MongoDB connected successfully");
+  return app.listen(process.env.PORT || 2004, () => {
+    console.log("🚀 Server is running");
+  });
+}
+
+if (process.env.NODE_ENV !== "test") {
+  startServer().catch((error) => {
+    console.error("Error starting server:", error);
+    process.exitCode = 1;
+  });
+}
+
+export { app };

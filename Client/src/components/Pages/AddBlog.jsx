@@ -12,13 +12,12 @@ function AddBlog() {
   const [content, setContent] = useState("");
   const [tagsInput, setInputTags] = useState("");
   const [images, setImages] = useState([]);
-  const { username, userId } = useContext(UserContext);
+  const { isAuthenticated } = useContext(UserContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const tagsArray = tagsInput.split(" ").map((tag) => tag.trim());
     const formData = new FormData();
-    formData.append("userId", userId);
     formData.append("title", title);
     formData.append("content", content);
     tagsArray.forEach((tag) => formData.append("tags", tag));
@@ -66,7 +65,7 @@ function AddBlog() {
     e.target.closest(".form-group").style.transform = "scale(1)";
   };
 
-  return username && username.length > 0 ? (
+  return isAuthenticated ? (
     <>
       <form onSubmit={handleSubmit} className="AddBlogForm">
         <div className="form-container">

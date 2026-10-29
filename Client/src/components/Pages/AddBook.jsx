@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import UserContext from '../User/UserContext';
 import Loginfirst from '../Loginfirst';
 function AddBook() {
-  const {username } = useContext(UserContext);
+  const {isAuthenticated } = useContext(UserContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false); 
@@ -41,7 +41,7 @@ function AddBook() {
   const handleAdd =(book) => {
     navigate('/books/add/form', {state :{book}})
   }
-    return username && username.length > 0 ? (
+    return isAuthenticated ? (
         <div>
             <ToastContainer style={{width: '30vw', height:'14vh'}} autoClose={3000}/>
             <form onSubmit={handleSearch} className='addSearch'>

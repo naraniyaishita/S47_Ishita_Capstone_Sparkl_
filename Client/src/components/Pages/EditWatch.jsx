@@ -15,7 +15,7 @@ function EditWatch() {
   const [coverImageURL, setCoverImageURL] = useState('')
   const [genre, setGenre] = useState([])
   const [whereTo, setWhereTo] = useState('')
-  const { username } = useContext(UserContext);
+  const { isAuthenticated } = useContext(UserContext);
   
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_SERVER}/watchList/item/${id}`)
@@ -41,7 +41,7 @@ function EditWatch() {
       console.error(error);
     }
   }
-  return  username && username.length > 0 ?(
+  return isAuthenticated ?(
     <>
     <form onSubmit={handleSubmit}>
       <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />

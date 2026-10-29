@@ -32,7 +32,8 @@ async function generateCodeChallenge(codeVerifier) {
 
 function Spotify() {
   const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
-  const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
+  const REDIRECT_URI =
+    import.meta.env.VITE_REDIRECT_URI || `${window.location.origin}/home`;
   const login = async () => {
     const codeVerifier = generateRandomString(128);
     const codeChallenge = await generateCodeChallenge(codeVerifier);
@@ -111,6 +112,14 @@ function Spotify() {
         console.error("Token exchange failed", err);
       });
   }, []);
+
+  useEffect(() => {
+    if (token) {
+      topArtist();
+      getLikedSongs();
+      refresh();
+    }
+  }, [token]);
 
   // Cheeking token validity
   const checkTokenValidity = async () => {
@@ -197,6 +206,9 @@ function Spotify() {
   const renderTopArtist = () => {
     return topArtists.map((artist) => (
       <div className="topArtists" key={artist.id}>
+        {artist.images?.[2]?.url && (
+          <img src={artist.images[2].url} alt="" />
+        )}
         {artist.name}
       </div>
     ));
@@ -451,6 +463,29 @@ function Spotify() {
                 {CurrentSong}
               </p>
             </div>
+            <form onSubmit={searchItems} className="SpotifySearchBar">
+              <select
+                value={searchType}
+                onChange={(e) => setSearchType(e.target.value)}
+                aria-label="Search type"
+              >
+                <option value="track">Track</option>
+                <option value="album">Album</option>
+              </select>
+              <input
+                type="search"
+                value={searchKey}
+                placeholder="Search Spotify..."
+                onChange={(e) => setSearchKey(e.target.value)}
+                aria-label="Search Spotify"
+              />
+              <button type="submit">Search</button>
+            </form>
+            {searchKey && renderSearchResults()?.length > 0 && (
+              <div className="searchResultsSpotify searchResultsBar">
+                {renderSearchResults()}
+              </div>
+            )}
             <button onClick={Pause}>
               <TbPlayerPauseFilled />
             </button>
@@ -468,31 +503,6 @@ function Spotify() {
             </button>
           </div>
           <div className="SpotifyData">
-            {/* Spotify Search */}
-            <div className="SpotifySearch">
-              <form onSubmit={searchItems} className="SearchFormSpotify">
-                <div className="SearchInputSpotify">
-                  <select
-                    value={searchType}
-                    onChange={(e) => setSearchType(e.target.value)}
-                  >
-                    <option value="track">Track</option>
-                    <option value="album">Album</option>
-                  </select>
-                  <input
-                    type="text"
-                    onChange={(e) => setSearchKey(e.target.value)}
-                  />
-                  <button type={"submit"}>Search</button>
-                </div>
-              </form>
-
-              {searchKey && renderSearchResults()?.length > 0 && (
-                <div className="searchResultsSpotify">
-                  {renderSearchResults()}
-                </div>
-              )}
-            </div>
             {/* Spotify Top Artist */}
             <div className="SpotifyTop">
               <button onClick={topArtist} className="SpotifyGetButton">
@@ -523,7 +533,10 @@ function Spotify() {
                       >
                         <TbPlayerPlayFilled />
                       </button>
-                      <p>{song.track.name}</p>
+                      <div>
+                        <p>{song.track.name}</p>
+                        <small>{song.track.artists?.[0]?.name}</small>
+                      </div>
                     </div>
                   ))}
                 </div>

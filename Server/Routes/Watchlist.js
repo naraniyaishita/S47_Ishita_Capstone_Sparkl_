@@ -1,43 +1,72 @@
-import express from "express";
 import { Router } from "express";
 import WatchListModal from "../Schemas/watchlists.schema.js";
+
 const router = Router();
 
-router.get("/:userId", async (req, res) => {
-  const userId = req.params.userId;
+router.get("/", async (req, res) => {
   try {
-    const watchList = await WatchListModal.find({ userId: userId });
+    const watchList = await WatchListModal.find({ userId: req.userId });
     res.json(watchList);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Server error");
+    res.status(500).json({ message: "Server error" });
   }
 });
-router.post("/", (req, res) => {
-  WatchListModal.create(req.body)
-    .then((item) => res.json(item))
-    .catch((err) => console.log(err));
+
+router.post("/", async (req, res) => {
+  try {
+    const watchList = await WatchListModal.create({
+      ...req.body,
+      userId: req.userId,
+    });
+    res.status(201).json(watchList);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Unable to create watchlist item" });
+  }
 });
 
-router.put("/update/:id", (req, res) => {
-  const id = req.params.id;
-  WatchListModal.findByIdAndUpdate(id, req.body)
-    .then((item) => res.json(item))
-    .catch((err) => console.log(err));
+router.put("/update/:id", async (req, res) => {
+  try {
+    const watchList = await WatchListModal.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
+    if (!watchList) return res.status(404).json({ message: "Watchlist item not found" });
+    res.json(watchList);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Unable to update watchlist item" });
+  }
 });
 
-router.get("/item/:id", (req, res) => {
-  const id = req.params.id;
-  WatchListModal.findById(id)
-    .then((item) => res.json(item))
-    .catch((err) => console.log(err));
+router.get("/item/:id", async (req, res) => {
+  try {
+    const watchList = await WatchListModal.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+    if (!watchList) return res.status(404).json({ message: "Watchlist item not found" });
+    res.json(watchList);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Unable to find watchlist item" });
+  }
 });
 
-router.delete("/delete/:id", (req, res) => {
-  const id = req.params.id;
-  WatchListModal.findByIdAndDelete(id)
-    .then((item) => res.json(item))
-    .catch((err) => console.log(err));
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const watchList = await WatchListModal.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+    if (!watchList) return res.status(404).json({ message: "Watchlist item not found" });
+    res.json(watchList);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Unable to delete watchlist item" });
+  }
 });
 
 export default router;

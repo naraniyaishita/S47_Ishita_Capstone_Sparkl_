@@ -15,7 +15,7 @@ function AddWatch() {
     const [noResult, setNoResult] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const { username } = useContext(UserContext);
+    const { isAuthenticated } = useContext(UserContext);
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -70,7 +70,7 @@ function AddWatch() {
         navigate("/watchlist/add/form", { state: { watch: emptyWatch } });
     };
 
-    return username && username.length > 0 ? (
+    return isAuthenticated ? (
         <>
             <Navbar />
             <div className="add-watchlist-container">
