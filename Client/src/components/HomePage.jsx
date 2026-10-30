@@ -1,20 +1,23 @@
-import React, { useContext, } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext } from "react";
 import Navbar from "./Navbar";
 import UserContext from "./User/UserContext";
 import "./Styles/Home.css";
-import Spotify from "./Pages/Spotify";
 import Loginfirst from "./Loginfirst";
+import SpotifyLayout from "./Spotify/SpotifyLayout";
+import SpotifyHome from "./Spotify/pages/SpotifyHome";
+
 function HomePage() {
-  const { username, isAuthenticated } = useContext(UserContext);
+  const { isAuthenticated } = useContext(UserContext);
   return isAuthenticated ? (
-    <div>
+    <div className="spk-page">
       <Navbar />
-      <h1 id="helloUser">Hello, {username} </h1>
-      <div>
-        <Spotify />
-      </div>
+      <SpotifyLayout>
+        <SpotifyHome />
+      </SpotifyLayout>
     </div>
-  ): <Loginfirst/>
+  ) : (
+    <Loginfirst />
+  );
 }
+
 export default HomePage;

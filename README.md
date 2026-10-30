@@ -37,7 +37,9 @@ start.
 - Book search through [OpenLibrary](https://openlibrary.org/)
 - Movie and series search through [OMDb](https://www.omdbapi.com/)
 - Image uploads through Cloudinary
-- Spotify playback and library integrations
+- Spotify Web API search/library integrations and an optional browser-local
+  Web Playback SDK device. Browser playback requires a Spotify Premium account
+  and an active browser device.
 
 ## API routes
 
