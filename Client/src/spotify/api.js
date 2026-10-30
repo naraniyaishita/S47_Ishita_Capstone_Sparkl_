@@ -1,8 +1,30 @@
 import axios from "axios";
-import { getValidSpotifyToken } from "./auth";
+import { getValidSpotifyToken, refreshValidSpotifyToken } from "./auth";
 import { playlistItemTrack } from "./format";
 
 export const SPOTIFY_API = "https://api.spotify.com/v1";
+
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const request = error.config;
+    if (error.response?.status !== 401 || !request || request._spotifyRetry) {
+      return Promise.reject(error);
+    }
+
+    request._spotifyRetry = true;
+    try {
+      const accessToken = await refreshValidSpotifyToken();
+      request.headers = {
+        ...request.headers,
+        Authorization: `Bearer ${accessToken}`,
+      };
+      return axios(request);
+    } catch (refreshError) {
+      return Promise.reject(refreshError);
+    }
+  }
+);
 
 export async function spotifyApiRequest(method, url, data, config = {}) {
   const accessToken = await getValidSpotifyToken();
@@ -355,6 +377,9 @@ function idFromUri(uri) {
 }
 
 export function playbackErrorMessage(error, action = "control playback") {
+  if (error.message === "Sparkl Browser Player is not ready yet") {
+    return "Sparkl Browser Player is still connecting. Try again in a moment.";
+  }
   const reason = error.response?.data?.error?.reason;
   const status = error.response?.status;
   const message = error.response?.data?.error?.message;

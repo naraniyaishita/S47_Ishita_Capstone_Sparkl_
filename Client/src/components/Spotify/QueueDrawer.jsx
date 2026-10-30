@@ -46,11 +46,6 @@ export default function QueueDrawer() {
             </button>
           </div>
         </header>
-        <p className="spk-drawer-note">
-          Spotify lets Sparkl add tracks and read the current queue. Individual
-          queue items cannot be removed through the Web API.
-        </p>
-
         {queueStatus === "loading" && <LoadingSkeleton label="Loading queue…" />}
         {queueStatus === "error" && (
           <ErrorState body={queueError} onRetry={refreshQueue} />

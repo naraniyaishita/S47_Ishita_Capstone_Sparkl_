@@ -3,8 +3,25 @@ import { useSpotify } from "../../../spotify/SpotifyProvider";
 import { getRedirectUri, SPOTIFY_SCOPES } from "../../../spotify/auth";
 
 export default function SettingsPage() {
-  const { profile, devices, activeDevice, chooseDevice, logoutSpotify, refreshPlayback } =
-    useSpotify();
+  const {
+    profile,
+    devices,
+    activeDevice,
+    browserPlayerStatus,
+    browserPlayerError,
+    chooseDevice,
+    logoutSpotify,
+    refreshPlayback,
+  } = useSpotify();
+
+  const browserStatusLabel = {
+    idle: "Not initialized",
+    loading: "Connecting…",
+    ready: "Ready",
+    disconnected: "Disconnected",
+    restricted: "Premium account required",
+    error: "Unavailable",
+  }[browserPlayerStatus] || "Unavailable";
 
   return (
     <div className="spk-page-block">
@@ -28,7 +45,12 @@ export default function SettingsPage() {
       <section className="spk-settings-card">
         <h3>Playback device</h3>
         <p className="spk-meta">
-          Playback control needs an active Spotify app. Choose a device, then press play.
+          Sparkl Browser Player: <strong>{browserStatusLabel}</strong>
+        </p>
+        {browserPlayerError && <p className="spk-device-error">{browserPlayerError}</p>}
+        <p className="spk-meta">
+          Browser playback requires Spotify Premium and a user interaction before
+          playback can start. Choose a device, then press play.
         </p>
         <button type="button" className="spk-btn secondary" onClick={() => refreshPlayback()}>
           Refresh devices

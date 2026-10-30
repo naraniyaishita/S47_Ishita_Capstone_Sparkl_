@@ -30,7 +30,7 @@ export function getClientId() {
 }
 
 export function getRedirectUri() {
-  return import.meta.env.VITE_REDIRECT_URI || `${window.location.origin}/home`;
+  return import.meta.env.VITE_REDIRECT_URI || `${window.location.origin}/spotify`;
 }
 
 function generateRandomString(length) {
@@ -118,6 +118,15 @@ async function refreshSpotifyToken() {
   }
 }
 
+export async function refreshValidSpotifyToken() {
+  if (!spotifyRefreshPromise) {
+    spotifyRefreshPromise = refreshSpotifyToken().finally(() => {
+      spotifyRefreshPromise = undefined;
+    });
+  }
+  return spotifyRefreshPromise;
+}
+
 export async function getValidSpotifyToken() {
   const accessToken = sessionStorage.getItem("Spotifytoken");
   const expiry = sessionStorage.getItem("SpotifytokenExpiry");
@@ -133,9 +142,7 @@ export async function getValidSpotifyToken() {
   }
 
   if (!spotifyRefreshPromise) {
-    spotifyRefreshPromise = refreshSpotifyToken().finally(() => {
-      spotifyRefreshPromise = undefined;
-    });
+    return refreshValidSpotifyToken();
   }
 
   return spotifyRefreshPromise;

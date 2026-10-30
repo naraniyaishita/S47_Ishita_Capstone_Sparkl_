@@ -100,11 +100,20 @@ with a local value. Set `VITE_SERVER` in `Client/.env` to the backend URL.
 Never commit either `.env` file.
 
 For local Spotify login, copy `Client/.env.example` to `Client/.env` and add
-the exact URI `http://localhost:5173/home` to the Spotify Developer Dashboard
-under **Redirect URIs**. Spotify permits `http://localhost` for local
-development; production must use the exact deployed HTTPS URI, such as
-`https://sparkl.pages.dev/home`. The URI in the dashboard and `VITE_REDIRECT_URI`
+the exact URI `http://127.0.0.1:5173/spotify` to the Spotify Developer Dashboard
+under **Redirect URIs**. Spotify requires a loopback IP instead of `localhost`
+for local HTTP callbacks; production must use the exact deployed HTTPS URI, such as
+`https://sparkl.pages.dev/spotify`. The URI in the dashboard and `VITE_REDIRECT_URI`
 must match exactly, including the path and trailing slash.
+
+For local Google login, set `CLIENT_URL=http://127.0.0.1:5173` and
+`SERVER_URL=http://127.0.0.1:2004` in `Server/.env`. Add
+`http://127.0.0.1:2004/auth/google/callback` to the Google OAuth client's
+**Authorized redirect URIs**. Google OAuth redirects to the server callback
+first; the server then redirects to `CLIENT_URL/google-success`, which finishes
+at `/home`. Restart the backend after changing `Server/.env`, because dotenv
+values are read only when the server starts. Do not use `localhost` in one
+local URL and `127.0.0.1` in another.
 
 ### Run
 

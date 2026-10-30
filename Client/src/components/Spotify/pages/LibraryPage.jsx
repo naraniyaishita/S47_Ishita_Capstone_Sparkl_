@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { TbPlayerPlayFilled } from "react-icons/tb";
 import { useSpotify } from "../../../spotify/SpotifyProvider";
 import { TrackRow } from "../ui/TrackRow";
 import { MediaCard } from "../ui/MediaCard";
@@ -16,6 +17,7 @@ const TABS = [
 export default function LibraryPage() {
   const {
     library,
+    profile,
     loadLiked,
     loadPlaylists,
     loadAlbums,
@@ -96,6 +98,14 @@ export default function LibraryPage() {
       {status === "success" && tab === "liked" && (
         <>
           <div className="spk-toolbar">
+            <button
+              type="button"
+              className="spk-btn"
+              disabled={!profile?.id || !library.liked?.items?.length}
+              onClick={() => playUri(`spotify:user:${profile.id}:collection`, "playlist")}
+            >
+              <TbPlayerPlayFilled aria-hidden="true" /> Play all liked songs
+            </button>
             <input
               type="search"
               value={query}

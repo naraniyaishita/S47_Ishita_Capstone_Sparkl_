@@ -20,6 +20,7 @@ export default function SpotifyHome() {
     library,
     playUri,
     queueTrack,
+    browserPlayerStatus,
   } = useSpotify();
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
@@ -63,7 +64,9 @@ export default function SpotifyHome() {
         <p>
           {currentTrack
             ? `Now playing ${currentTrack.name}`
-            : "Connect a Spotify device, then play from your library or search."}
+            : browserPlayerStatus === "ready"
+              ? "Sparkl Browser Player is ready. Choose a song to start playback."
+              : "Sparkl is preparing its browser player. You can browse your library while it connects."}
         </p>
       </section>
 

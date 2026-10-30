@@ -44,6 +44,9 @@ const SpotifyContext = createContext(null);
 const CACHE_TTL = 5 * 60 * 1000;
 let spotifySdkPromise;
 
+const wait = (milliseconds) =>
+  new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+
 function loadSpotifySdk() {
   if (window.Spotify) return Promise.resolve(window.Spotify);
   if (spotifySdkPromise) return spotifySdkPromise;
@@ -83,6 +86,8 @@ export function SpotifyProvider({ children }) {
   const [devices, setDevices] = useState([]);
   const [activeDevice, setActiveDevice] = useState(null);
   const [browserDeviceId, setBrowserDeviceId] = useState("");
+  const [browserPlayerStatus, setBrowserPlayerStatus] = useState("idle");
+  const [browserPlayerError, setBrowserPlayerError] = useState("");
   const [volume, setVolumeState] = useState(0.5);
   const [queue, setQueue] = useState({ currently_playing: null, queue: [] });
   const [queueStatus, setQueueStatus] = useState("idle");
@@ -196,18 +201,13 @@ export function SpotifyProvider({ children }) {
         return;
       }
       if (!code) return;
-      if (sessionStorage.getItem("Spotifytoken")) {
-        setToken(sessionStorage.getItem("Spotifytoken"));
-        window.history.replaceState({}, document.title, "/home");
-        return;
-      }
       if (sessionStorage.getItem("spotify_exchanging")) return;
 
       sessionStorage.setItem("spotify_exchanging", "1");
       try {
         const accessToken = await exchangeAuthorizationCode(code);
         setToken(accessToken);
-        window.history.replaceState({}, document.title, "/home");
+        window.history.replaceState({}, document.title, "/spotify");
       } catch (exchangeError) {
         sessionStorage.removeItem("spotify_exchanging");
         console.error(
@@ -236,9 +236,15 @@ export function SpotifyProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (!token) return undefined;
+    if (!token) {
+      setBrowserPlayerStatus("idle");
+      setBrowserPlayerError("");
+      return undefined;
+    }
 
     let cancelled = false;
+    setBrowserPlayerStatus("loading");
+    setBrowserPlayerError("");
     const initializePlayer = async () => {
       try {
         const Spotify = await loadSpotifySdk();
@@ -260,6 +266,8 @@ export function SpotifyProvider({ children }) {
           ["ready", ({ device_id }) => {
             browserDeviceIdRef.current = device_id;
             setBrowserDeviceId(device_id);
+            setBrowserPlayerStatus("ready");
+            setBrowserPlayerError("");
             setDevices((current) => [
               ...current.filter((device) => device.id !== device_id),
               {
@@ -274,36 +282,74 @@ export function SpotifyProvider({ children }) {
             if (device_id === browserDeviceIdRef.current) {
               browserDeviceIdRef.current = "";
               setBrowserDeviceId("");
+              setBrowserPlayerStatus("disconnected");
+              setBrowserPlayerError("The browser player disconnected. Try refreshing the device.");
             }
           }],
           ["player_state_changed", (state) => {
             if (!state) return;
             const track = state.track_window.current_track;
+            const device = browserDeviceIdRef.current
+              ? {
+                  id: browserDeviceIdRef.current,
+                  name: "Sparkl Browser Player",
+                  type: "Computer",
+                  is_active: true,
+                }
+              : null;
             setCurrentTrack(track);
             setIsPlaying(!state.paused);
             setProgressMs(state.position);
             setDurationMs(track?.duration_ms || 0);
             setVolumeState(state.volume ?? volume);
+            setActiveDevice(device);
             progressAnchor.current = {
               at: Date.now(),
               value: state.position,
               playing: !state.paused,
             };
           }],
-          ["initialization_error", ({ message }) => toast.error(message)],
-          ["authentication_error", ({ message }) => toast.error(message)],
-          ["account_error", ({ message }) => toast.error(message)],
-          ["playback_error", ({ message }) => toast.error(message)],
+          ["initialization_error", ({ message }) => {
+            setBrowserPlayerStatus("error");
+            setBrowserPlayerError(message);
+            toast.error(message);
+          }],
+          ["authentication_error", ({ message }) => {
+            setBrowserPlayerStatus("error");
+            setBrowserPlayerError(message);
+            toast.error(message);
+          }],
+          ["account_error", ({ message }) => {
+            setBrowserPlayerStatus("restricted");
+            setBrowserPlayerError(
+              message || "Browser playback requires a Spotify Premium account."
+            );
+            toast.error(message || "Browser playback requires a Spotify Premium account.");
+          }],
+          ["playback_error", ({ message }) => {
+            setBrowserPlayerError(message);
+            toast.error(message);
+          }],
+          ["autoplay_failed", () => {
+            setBrowserPlayerError(
+              "Spotify needs a user interaction before playback can start in this browser."
+            );
+          }],
         ];
 
         listeners.forEach(([event, handler]) => player.addListener(event, handler));
         playerListenersRef.current = listeners;
         playerRef.current = player;
         if (!(await player.connect())) {
+          player.disconnect();
+          playerRef.current = null;
+          playerListenersRef.current = [];
           throw new Error("Spotify browser player could not connect");
         }
       } catch (error) {
         if (!cancelled) {
+          setBrowserPlayerStatus("error");
+          setBrowserPlayerError(error.message);
           console.error("Failed to initialize Spotify browser player", error);
           toast.error("Browser playback is unavailable. You can still use Spotify devices.");
         }
@@ -313,16 +359,18 @@ export function SpotifyProvider({ children }) {
     initializePlayer();
     return () => {
       cancelled = true;
-      if (playerRef.current) {
+      const player = playerRef.current;
+      if (player) {
         playerListenersRef.current.forEach(([event, handler]) => {
-          playerRef.current.removeListener(event, handler);
+          player.removeListener(event, handler);
         });
-        playerRef.current.disconnect();
+        player.disconnect();
         playerRef.current = null;
         playerListenersRef.current = [];
       }
       browserDeviceIdRef.current = "";
       setBrowserDeviceId("");
+      setBrowserPlayerStatus("idle");
     };
   }, [token]);
 
@@ -350,9 +398,37 @@ export function SpotifyProvider({ children }) {
     setCurrentTrack(null);
     setQueue({ currently_playing: null, queue: [] });
     setBrowserDeviceId("");
+    setBrowserPlayerStatus("idle");
+    setBrowserPlayerError("");
     setActiveDevice(null);
     clearSpotifySession();
   }, []);
+
+  const playOnPreferredDevice = useCallback(
+    async (body) => {
+      const browserId = browserDeviceIdRef.current;
+      const deviceId = browserId || activeDevice?.id;
+      if (!deviceId) {
+        throw new Error("Sparkl Browser Player is not ready yet");
+      }
+      // Unlock browser audio synchronously from the user's play click.
+      const activation = browserId && playerRef.current?.activateElement?.();
+      activation?.catch(() => {});
+      try {
+        await play(body, deviceId);
+      } catch (error) {
+        const reason = error.response?.data?.error?.reason;
+        if (!browserId || (error.response?.status !== 404 && reason !== "NO_ACTIVE_DEVICE")) {
+          throw error;
+        }
+        await transferPlayback(browserId, true);
+        // Spotify does not guarantee ordering between transfer and play calls.
+        await wait(1000);
+        await play(body, browserId);
+      }
+    },
+    [activeDevice?.id]
+  );
 
   const playUri = useCallback(
     async (uri, type = "track") => {
@@ -361,14 +437,14 @@ export function SpotifyProvider({ children }) {
           type === "track" || !type
             ? { uris: [uri] }
             : { context_uri: uri };
-        await play(body, activeDevice?.id);
+        await playOnPreferredDevice(body);
         setIsPlaying(true);
         setTimeout(() => refreshPlayback(true), 400);
       } catch (error) {
         notifyPlaybackError(error, "play this item");
       }
     },
-    [activeDevice, notifyPlaybackError, refreshPlayback]
+    [notifyPlaybackError, playOnPreferredDevice, refreshPlayback]
   );
 
   const playContext = useCallback(
@@ -377,19 +453,19 @@ export function SpotifyProvider({ children }) {
         const body = offsetUri
           ? { context_uri: contextUri, offset: { uri: offsetUri } }
           : { context_uri: contextUri };
-        await play(body, activeDevice?.id);
+        await playOnPreferredDevice(body);
         setIsPlaying(true);
         setTimeout(() => refreshPlayback(true), 400);
       } catch (error) {
         notifyPlaybackError(error, "start playback");
       }
     },
-    [activeDevice, notifyPlaybackError, refreshPlayback]
+    [notifyPlaybackError, playOnPreferredDevice, refreshPlayback]
   );
 
   const togglePlayback = useCallback(async () => {
     try {
-      if (activeDevice?.id === browserDeviceId && playerRef.current) {
+      if (browserDeviceId && playerRef.current) {
         await playerRef.current.togglePlay();
         return;
       }
@@ -414,10 +490,9 @@ export function SpotifyProvider({ children }) {
       notifyPlaybackError(error, isPlaying ? "pause" : "play");
     }
   }, [activeDevice, browserDeviceId, isPlaying, notifyPlaybackError, progressMs]);
-
   const nextTrack = useCallback(async () => {
     try {
-      if (activeDevice?.id === browserDeviceId && playerRef.current) {
+      if (browserDeviceId && playerRef.current) {
         await playerRef.current.nextTrack();
         return;
       }
@@ -427,10 +502,9 @@ export function SpotifyProvider({ children }) {
       notifyPlaybackError(error, "skip to the next track");
     }
   }, [activeDevice, browserDeviceId, notifyPlaybackError, refreshPlayback]);
-
   const previousTrack = useCallback(async () => {
     try {
-      if (activeDevice?.id === browserDeviceId && playerRef.current) {
+      if (browserDeviceId && playerRef.current) {
         await playerRef.current.previousTrack();
         return;
       }
@@ -465,7 +539,7 @@ export function SpotifyProvider({ children }) {
   const seek = useCallback(
     async (position) => {
       try {
-        if (activeDevice?.id === browserDeviceId && playerRef.current) {
+        if (browserDeviceId && playerRef.current) {
           await playerRef.current.seek(position);
           return;
         }
@@ -487,7 +561,7 @@ export function SpotifyProvider({ children }) {
     async (nextVolume) => {
       const normalized = Math.min(1, Math.max(0, nextVolume));
       try {
-        if (activeDevice?.id === browserDeviceId && playerRef.current) {
+        if (browserDeviceId && playerRef.current) {
           await playerRef.current.setVolume(normalized);
         } else {
           throw new Error("Volume control is available for the browser player only");
@@ -556,14 +630,25 @@ export function SpotifyProvider({ children }) {
     if (!force && !append && isFresh(current)) {
       return current;
     }
-    const offset = append ? current?.items.length || 0 : 0;
-    const response = await getLikedTracks({ limit: 50, offset });
-    const pageItems = response.data.items || [];
-    const items = append ? [...(current?.items || []), ...pageItems] : pageItems;
+    const items = append ? [...(current?.items || [])] : [];
+    let offset = items.length;
+    let total = current?.total || 0;
+    let hasMore = true;
+
+    while (hasMore) {
+      const response = await getLikedTracks({ limit: 50, offset });
+      const pageItems = response.data.items || [];
+      items.push(...pageItems);
+      total = response.data.total || total || items.length;
+      hasMore = Boolean(response.data.next) && pageItems.length > 0;
+      offset += pageItems.length;
+      if (pageItems.length === 0) break;
+    }
+
     const next = {
       items,
-      total: response.data.total || items.length,
-      hasMore: Boolean(response.data.next),
+      total: total || items.length,
+      hasMore,
       loadedAt: Date.now(),
     };
     setLibrary((prev) => ({ ...prev, liked: next }));
@@ -660,6 +745,9 @@ export function SpotifyProvider({ children }) {
       durationMs,
       devices,
       activeDevice,
+      browserDeviceId,
+      browserPlayerStatus,
+      browserPlayerError,
       queue,
       queueStatus,
       queueError,
@@ -700,6 +788,9 @@ export function SpotifyProvider({ children }) {
       durationMs,
       devices,
       activeDevice,
+      browserDeviceId,
+      browserPlayerStatus,
+      browserPlayerError,
       queue,
       queueStatus,
       queueError,

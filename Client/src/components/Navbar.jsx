@@ -6,8 +6,6 @@ import UserContext from "./User/UserContext";
 
 const pages = [
   { name: "Home", path: "/home" },
-  { name: "Search", path: "/spotify/search" },
-  { name: "Library", path: "/spotify/library" },
   { name: "Bookshelf", path: "/bookshelf" },
   { name: "Watchlist", path: "/watchlist" },
   { name: "Blogs", path: "/blogs" },
