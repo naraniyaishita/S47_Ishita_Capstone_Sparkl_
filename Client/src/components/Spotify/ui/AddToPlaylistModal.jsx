@@ -52,10 +52,6 @@ export function AddToPlaylistModal({ track, onClose }) {
             ×
           </button>
         </header>
-        <p>
-          {track.name} — choose a playlist you own, or create one. Spotify only
-          allows adding tracks to playlists you can edit.
-        </p>
         <form onSubmit={createAndAdd} className="spk-inline-form">
           <input
             value={name}

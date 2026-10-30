@@ -5,8 +5,8 @@ import request from "supertest";
 process.env.NODE_ENV = "test";
 process.env.ACCESS_TOKEN_SECRET = "test-secret";
 process.env.CLIENT_SECRET_GOOGLE = "test-session-secret";
-process.env.CLIENT_URL = "http://localhost:5173";
-process.env.SERVER_URL = "http://localhost:2004";
+process.env.CLIENT_URL = "http://127.0.0.1:5173";
+process.env.SERVER_URL = "http://127.0.0.1:2004";
 process.env.GOOGLE_CLIENT_ID = "test-google-client-id";
 process.env.GOOGLE_CLIENT_SECRET = "test-google-client-secret";
 

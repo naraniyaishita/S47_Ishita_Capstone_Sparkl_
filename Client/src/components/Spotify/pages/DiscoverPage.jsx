@@ -150,7 +150,11 @@ export default function DiscoverPage() {
                   onQueue={() => queueTrack(track.uri)}
                 />
                 <p className="spk-why">{explainTrackForMood(track, mood)}</p>
-                <button type="button" onClick={() => removeTrack(track.id)}>
+                <button
+                  type="button"
+                  className="spk-btn secondary spk-remove-btn"
+                  onClick={() => removeTrack(track.id)}
+                >
                   Remove
                 </button>
               </div>

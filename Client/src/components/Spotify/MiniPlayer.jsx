@@ -31,6 +31,8 @@ export default function MiniPlayer() {
     setVolume,
     setQueueOpen,
     token,
+    activeDevice,
+    browserPlayerStatus,
   } = useSpotify();
 
   if (!token) return null;
@@ -56,6 +58,9 @@ export default function MiniPlayer() {
         <div>
           <strong>{currentTrack?.name || "Nothing playing"}</strong>
           <span>{currentTrack ? artistNames(currentTrack.artists) : "Open Spotify on a device to start"}</span>
+          <small className="spk-mini-device">
+            {activeDevice?.name || (browserPlayerStatus === "ready" ? "Sparkl Browser Player ready" : "No active device")}
+          </small>
         </div>
       </div>
 

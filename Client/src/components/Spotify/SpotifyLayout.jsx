@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import {
   TbHome,
   TbSearch,
@@ -7,7 +7,6 @@ import {
   TbBooks,
   TbChartBar,
   TbSettings,
-  TbSparkles,
 } from "react-icons/tb";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,18 +18,16 @@ import "../Styles/Spotify.css";
 import "../Styles/SpotifyApp.css";
 
 const links = [
-  { to: "/home", label: "Home", icon: TbHome, end: true },
+  { to: "/spotify", label: "Home", icon: TbHome, end: true },
   { to: "/spotify/search", label: "Search", icon: TbSearch },
   { to: "/spotify/queue", label: "Queue", icon: TbList },
   { to: "/spotify/library", label: "Library", icon: TbBooks },
   { to: "/spotify/taste", label: "Your Taste", icon: TbChartBar },
-  { to: "/spotify/discover", label: "Discover", icon: TbSparkles },
   { to: "/spotify/settings", label: "Settings", icon: TbSettings },
 ];
 
 export default function SpotifyLayout({ children }) {
   const { token, profile, logoutSpotify, setQueueOpen } = useSpotify();
-  const navigate = useNavigate();
 
   if (!token) {
     return (
@@ -91,10 +88,7 @@ export default function SpotifyLayout({ children }) {
                   type="button"
                   className="spk-nav-link"
                   title={link.label}
-                  onClick={() => {
-                    setQueueOpen(true);
-                    navigate("/spotify/queue");
-                  }}
+                  onClick={() => setQueueOpen(true)}
                 >
                   <Icon />
                   <span>{link.label}</span>
