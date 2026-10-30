@@ -29,28 +29,35 @@ async function generateCodeChallenge(codeVerifier) {
     .replace(/\//g, "_")
     .replace(/=+$/, "");
 }
+const spotifyAxios = axios.create({
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded",
+  },
+});
 
 function Spotify() {
   const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
   const REDIRECT_URI =
     import.meta.env.VITE_REDIRECT_URI || `${window.location.origin}/home`;
   const login = async () => {
-    const codeVerifier = generateRandomString(128);
-    const codeChallenge = await generateCodeChallenge(codeVerifier);
+  const codeVerifier = generateRandomString(128);
+  const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-    sessionStorage.setItem("code_verifier", codeVerifier);
+  sessionStorage.setItem("code_verifier", codeVerifier);
 
-    const authUrl =
-      `https://accounts.spotify.com/authorize` +
-      `?client_id=${CLIENT_ID}` +
-      `&response_type=code` +
-      `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-      `&code_challenge_method=S256` +
-      `&code_challenge=${codeChallenge}` +
-      `&scope=streaming user-read-email user-read-private user-library-read user-library-modify user-read-playback-state user-modify-playback-state user-read-currently-playing user-top-read playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-follow-modify user-follow-read user-read-recently-played`;
+  const params = new URLSearchParams({
+    client_id: CLIENT_ID,
+    response_type: "code",
+    redirect_uri: REDIRECT_URI,
+    code_challenge_method: "S256",
+    code_challenge: codeChallenge,
+    scope:
+      "streaming user-read-email user-read-private user-library-read user-library-modify user-read-playback-state user-modify-playback-state user-read-currently-playing user-top-read playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-follow-modify user-follow-read user-read-recently-played",
+  });
 
-    window.location.href = authUrl;
-  };
+  window.location.href =
+    `https://accounts.spotify.com/authorize?${params.toString()}`;
+};
 
   const [token, setToken] = useState("");
 
@@ -73,22 +80,36 @@ function Spotify() {
   //setToken
 
   useEffect(() => {
+  const exchangeToken = async () => {
     const params = new URLSearchParams(window.location.search);
+
     const code = params.get("code");
+    const error = params.get("error");
 
-    const storedToken = sessionStorage.getItem("Spotifytoken");
-
-    if (storedToken) {
-      setToken(storedToken);
+    // Spotify may redirect back with an authorization error
+    if (error) {
+      console.error("Spotify authorization failed:", error);
       return;
     }
 
+    // No authorization code means there is nothing to exchange
     if (!code) return;
+
+    // Avoid exchanging the same code multiple times
+    if (sessionStorage.getItem("Spotifytoken")) {
+      setToken(sessionStorage.getItem("Spotifytoken"));
+      return;
+    }
 
     const codeVerifier = sessionStorage.getItem("code_verifier");
 
-    axios
-      .post(
+    if (!codeVerifier) {
+      console.error("Spotify code verifier is missing");
+      return;
+    }
+
+    try {
+      const response = await spotifyAxios.post(
         "https://accounts.spotify.com/api/token",
         new URLSearchParams({
           client_id: CLIENT_ID,
@@ -96,22 +117,28 @@ function Spotify() {
           code,
           redirect_uri: REDIRECT_URI,
           code_verifier: codeVerifier,
-        }),
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      )
-      .then((res) => {
-        sessionStorage.setItem("Spotifytoken", res.data.access_token);
-        setToken(res.data.access_token);
-        window.history.replaceState({}, document.title, "/home");
-      })
-      .catch((err) => {
-        console.error("Token exchange failed", err);
-      });
-  }, []);
+        })
+      );
+
+      const accessToken = response.data.access_token;
+
+      sessionStorage.setItem("Spotifytoken", accessToken);
+      sessionStorage.removeItem("code_verifier");
+
+      setToken(accessToken);
+
+      // Remove authorization code from URL
+      window.history.replaceState({}, document.title, "/home");
+    } catch (error) {
+      console.error(
+        "Spotify token exchange failed:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  exchangeToken();
+}, []);
 
   useEffect(() => {
     if (token) {
