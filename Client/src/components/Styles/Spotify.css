@@ -849,3 +849,153 @@
 .topArtists{
     width: 100%;
 }
+
+/* Final layout polish */
+.Spotify {
+    min-height: 100vh;
+    padding: 1px 0 2rem;
+}
+
+.SpotifyButtons {
+    margin: 1.5rem auto;
+    width: min(1440px, calc(100% - 3rem));
+    box-sizing: border-box;
+    justify-content: space-between;
+}
+
+.SpotifyPlayer {
+    flex: 1 1 360px;
+}
+
+.SpotifySearchBar {
+    order: 3;
+}
+
+.SpotifyData {
+    width: min(1440px, calc(100% - 3rem));
+    margin: 2rem auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    min-height: 0;
+}
+
+.SpotifyTop,
+.SpotifyLiked {
+    min-width: 0;
+    padding: 1.5rem;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.SpotifyTop > div:last-child,
+.LikedSongsContainer {
+    max-height: min(56vh, 520px);
+    min-height: 240px;
+    padding: 0 0.35rem 0 0;
+    scrollbar-gutter: stable;
+}
+
+.SpotifyTop > div:last-child > div,
+.LikedSong {
+    box-sizing: border-box;
+    min-height: 76px;
+    padding: 0.85rem 1rem;
+    border-radius: 16px;
+    border: 1px solid rgba(76, 66, 145, 0.07);
+    box-shadow: 0 3px 12px rgba(39, 31, 87, 0.045);
+}
+
+.SpotifyTop > div:last-child > div:hover,
+.LikedSong:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(39, 31, 87, 0.1);
+}
+
+.SpotifyTop > div:last-child > div {
+    border-left: 4px solid var(--spotify-green);
+}
+
+.LikedSong {
+    border-left: 4px solid rgba(29, 185, 84, 0.68);
+}
+
+.LikedSong > div,
+.searchItem > div {
+    min-width: 0;
+}
+
+.LikedSong p,
+.searchItem p {
+    overflow-wrap: anywhere;
+}
+
+.LikedSong small {
+    color: #777;
+}
+
+.SpotifyTop::-webkit-scrollbar-thumb,
+.LikedSongsContainer::-webkit-scrollbar-thumb {
+    background: #a29bfe;
+}
+
+.SpotifyLoading {
+    min-height: 240px;
+    display: grid;
+    place-items: center;
+    color: #777;
+    font-size: 0.95rem;
+}
+
+/* The old rule accidentally pulsed the entire liked-song list forever. */
+.SpotifyTop > div:first-of-type,
+.SpotifyLiked > div:first-of-type {
+    animation: none;
+}
+
+.SpotifySearch::before,
+.SpotifyTop::before,
+.SpotifyLiked::before {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .SpotifyButtons,
+    .SpotifyData {
+        width: calc(100% - 2rem);
+    }
+
+    .SpotifyButtons {
+        margin: 1rem auto;
+    }
+
+    .SpotifySearchBar {
+        order: 0;
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .SpotifySearchBar input {
+        flex-basis: 12rem;
+    }
+
+    .SpotifyData {
+        grid-template-columns: minmax(0, 1fr);
+        margin: 1.5rem auto;
+    }
+
+    .SpotifyTop > div:last-child,
+    .LikedSongsContainer {
+        max-height: 55vh;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .Spotify *,
+    .Spotify *::before,
+    .Spotify *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

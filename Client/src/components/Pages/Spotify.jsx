@@ -35,6 +35,89 @@ const spotifyAxios = axios.create({
   },
 });
 
+let spotifyRefreshPromise;
+
+async function refreshSpotifyToken() {
+  const refreshToken = sessionStorage.getItem("SpotifyrefreshToken");
+
+  if (!refreshToken) {
+    throw new Error("Spotify refresh token not found");
+  }
+
+  try {
+    const response = await spotifyAxios.post(
+      "https://accounts.spotify.com/api/token",
+      new URLSearchParams({
+        client_id: import.meta.env.VITE_CLIENT_ID,
+        grant_type: "refresh_token",
+        refresh_token: refreshToken,
+      })
+    );
+    const { access_token, expires_in, refresh_token } = response.data;
+
+    sessionStorage.setItem("Spotifytoken", access_token);
+    sessionStorage.setItem(
+      "SpotifytokenExpiry",
+      Date.now() + expires_in * 1000
+    );
+    if (refresh_token) {
+      sessionStorage.setItem("SpotifyrefreshToken", refresh_token);
+    }
+
+    return access_token;
+  } catch (error) {
+    console.error(
+      "Spotify token refresh failed:",
+      error.response?.data || error.message
+    );
+    if (error.response?.data?.error === "invalid_grant") {
+      sessionStorage.removeItem("Spotifytoken");
+      sessionStorage.removeItem("SpotifyrefreshToken");
+      sessionStorage.removeItem("SpotifytokenExpiry");
+    }
+    throw error;
+  }
+}
+
+async function getValidSpotifyToken() {
+  const accessToken = sessionStorage.getItem("Spotifytoken");
+  const expiry = sessionStorage.getItem("SpotifytokenExpiry");
+
+  if (!accessToken) {
+    throw new Error("Spotify access token not found");
+  }
+
+  const isExpired =
+    !expiry || Date.now() >= Number(expiry) - 5 * 60 * 1000;
+
+  if (!isExpired) {
+    return accessToken;
+  }
+
+  if (!spotifyRefreshPromise) {
+    spotifyRefreshPromise = refreshSpotifyToken().finally(() => {
+      spotifyRefreshPromise = undefined;
+    });
+  }
+
+  return spotifyRefreshPromise;
+}
+
+async function spotifyApiRequest(method, url, data, config = {}) {
+  const accessToken = await getValidSpotifyToken();
+
+  return axios({
+    method,
+    url,
+    data,
+    ...config,
+    headers: {
+      ...config.headers,
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
 function Spotify() {
   const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
   const REDIRECT_URI =
@@ -59,7 +142,9 @@ function Spotify() {
     `https://accounts.spotify.com/authorize?${params.toString()}`;
 };
 
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState(
+  sessionStorage.getItem("Spotifytoken") || ""
+);
 
   const [searchKey, setSearchKey] = useState("");
   const [SearchData, setSearchData] = useState([]);
@@ -120,12 +205,19 @@ function Spotify() {
         })
       );
 
-      const accessToken = response.data.access_token;
+      const { access_token, refresh_token, expires_in } = response.data;
 
-      sessionStorage.setItem("Spotifytoken", accessToken);
+      sessionStorage.setItem("Spotifytoken", access_token);
+      if (refresh_token) {
+        sessionStorage.setItem("SpotifyrefreshToken", refresh_token);
+      }
+      sessionStorage.setItem(
+        "SpotifytokenExpiry",
+        Date.now() + expires_in * 1000
+      );
       sessionStorage.removeItem("code_verifier");
 
-      setToken(accessToken);
+      setToken(access_token);
 
       // Remove authorization code from URL
       window.history.replaceState({}, document.title, "/home");
@@ -141,6 +233,22 @@ function Spotify() {
 }, []);
 
   useEffect(() => {
+    const restoreSpotifySession = async () => {
+      if (!sessionStorage.getItem("Spotifytoken")) return;
+
+      try {
+        const validToken = await getValidSpotifyToken();
+        setToken(validToken);
+      } catch (error) {
+        console.error("Could not restore Spotify session", error);
+        setToken("");
+      }
+    };
+
+    restoreSpotifySession();
+  }, []);
+
+  useEffect(() => {
     if (token) {
       topArtist();
       getLikedSongs();
@@ -151,11 +259,10 @@ function Spotify() {
   // Cheeking token validity
   const checkTokenValidity = async () => {
     try {
-      const response = await axios.get("https://api.spotify.com/v1/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await spotifyApiRequest(
+        "get",
+        "https://api.spotify.com/v1/me"
+      );
       return response.status === 200;
     } catch (error) {
       console.error("Token is invalid or expired", error);
@@ -168,15 +275,12 @@ function Spotify() {
   const searchItems = async (e) => {
     refresh();
     e.preventDefault();
-    const { data } = await axios.get("https://api.spotify.com/v1/search", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
-        q: searchKey,
-        type: searchType,
-      },
-    });
+    const { data } = await spotifyApiRequest(
+      "get",
+      "https://api.spotify.com/v1/search",
+      undefined,
+      { params: { q: searchKey, type: searchType } }
+    );
     const searchResults = data[`${searchType}s`].items;
     setSearchData(searchResults);
   };
@@ -214,13 +318,9 @@ function Spotify() {
     refresh();
     setIsTopLoading(true);
     try {
-      const response = await axios.get(
+      const response = await spotifyApiRequest(
+        "get",
         "https://api.spotify.com/v1/me/top/artists",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
       );
       setTopArtists(response.data.items);
     } catch (error) {
@@ -250,13 +350,9 @@ function Spotify() {
 
     while (hasMore) {
       try {
-        const response = await axios.get(
+        const response = await spotifyApiRequest(
+          "get",
           `https://api.spotify.com/v1/me/tracks?limit=20&offset=${offset}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
         );
         songData = songData.concat(response.data.items);
         offset += 20;
@@ -275,14 +371,10 @@ function Spotify() {
   //Pause
   const Pause = async () => {
     try {
-      await axios.put(
+      await spotifyApiRequest(
+        "put",
         `https://api.spotify.com/v1/me/player/pause`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        {}
       );
     } catch (error) {
       console.error("Failed to pause", error);
@@ -291,14 +383,10 @@ function Spotify() {
   //Play
   const Play = async () => {
     try {
-      await axios.put(
+      await spotifyApiRequest(
+        "put",
         `https://api.spotify.com/v1/me/player/play`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        {}
       );
     } catch (error) {
       console.error("Failed to play", error);
@@ -306,14 +394,10 @@ function Spotify() {
   };
   const Next = async () => {
     try {
-      await axios.post(
+      await spotifyApiRequest(
+        "post",
         `https://api.spotify.com/v1/me/player/next`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        {}
       );
     } catch (error) {
       console.error("Failed to next", error);
@@ -323,14 +407,10 @@ function Spotify() {
   //Previous
   const Previous = async () => {
     try {
-      await axios.post(
+      await spotifyApiRequest(
+        "post",
         `https://api.spotify.com/v1/me/player/previous`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        {}
       );
     } catch (error) {
       console.error("Failed to previous", error);
@@ -340,14 +420,10 @@ function Spotify() {
   const Shuffle = async () => {
     try {
       setIsShuffle(!isShuffle);
-      await axios.put(
+      await spotifyApiRequest(
+        "put",
         `https://api.spotify.com/v1/me/player/shuffle?state=${isShuffle}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        {}
       );
     } catch (error) {
       console.error("Failed to shuffle", error);
@@ -359,14 +435,10 @@ function Spotify() {
     try {
       const requestBody =
         type === "album" ? { context_uri: uri } : { uris: [uri] };
-      await axios.put(
+      await spotifyApiRequest(
+        "put",
         `https://api.spotify.com/v1/me/player/play`,
-        requestBody,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        requestBody
       );
     } catch (error) {
       console.error(`Failed to play selected ${type}`, error);
@@ -375,13 +447,9 @@ function Spotify() {
   //Current Song
   const fetchCurrentSong = async () => {
     try {
-      const response = await axios.get(
+      const response = await spotifyApiRequest(
+        "get",
         "https://api.spotify.com/v1/me/player/currently-playing",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
       );
 
       if (response.data && response.data.item) {
@@ -396,13 +464,9 @@ function Spotify() {
   //Devices
   const checkDevices = async () => {
     try {
-      const response = await axios.get(
+      const response = await spotifyApiRequest(
+        "get",
         "https://api.spotify.com/v1/me/player/devices",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
       );
 
       const devices = response.data.devices;
@@ -421,11 +485,10 @@ function Spotify() {
   //Player State
   const State = async () => {
     try {
-      const response = await axios.get(`https://api.spotify.com/v1/me/player`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await spotifyApiRequest(
+        "get",
+        "https://api.spotify.com/v1/me/player"
+      );
       setIsPlaying(response.data.is_playing);
     } catch (error) {
       console.error("Failed to get player state", error);
@@ -442,7 +505,10 @@ function Spotify() {
   //Logout
   const logout = () => {
     setToken("");
-    window.sessionStorage.removeItem("Spotifytoken");
+    sessionStorage.removeItem("Spotifytoken");
+    sessionStorage.removeItem("SpotifyrefreshToken");
+    sessionStorage.removeItem("SpotifytokenExpiry");
+    sessionStorage.removeItem("code_verifier");
   };
 
   return (
@@ -536,7 +602,7 @@ function Spotify() {
                 Top Artist
               </button>
               {isTopLoading ? (
-                <div>Loading...</div>
+                <div className="SpotifyLoading">Loading artists…</div>
               ) : (
                 <div> {renderTopArtist()}</div>
               )}
@@ -546,7 +612,7 @@ function Spotify() {
                 Get Liked Songs
               </button>
               {isLikedLoading ? (
-                <div>Loading...</div>
+                <div className="SpotifyLoading">Loading liked songs…</div>
               ) : (
                 <div className="LikedSongsContainer">
                   {likedSongData.map((song, index) => (
