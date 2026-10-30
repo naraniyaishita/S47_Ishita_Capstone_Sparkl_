@@ -21,6 +21,17 @@ import AddWatchlistForm from "./components/Pages/AddWatchlistForm";
 import EditWatch from "./components/Pages/EditWatch";
 
 import GoogleSuccess from "./components/AuthPages/GoogleSucess";
+import MusicRoute from "./components/MusicRoute";
+import SearchPage from "./components/Spotify/pages/SearchPage";
+import QueuePage from "./components/Spotify/pages/QueuePage";
+import LibraryPage from "./components/Spotify/pages/LibraryPage";
+import PlaylistDetail from "./components/Spotify/pages/PlaylistDetail";
+import AlbumDetail from "./components/Spotify/pages/AlbumDetail";
+import ArtistDetail from "./components/Spotify/pages/ArtistDetail";
+import TastePage from "./components/Spotify/pages/TastePage";
+import DiscoverPage from "./components/Spotify/pages/DiscoverPage";
+import SettingsPage from "./components/Spotify/pages/SettingsPage";
+import { SpotifyProvider } from "./spotify/SpotifyProvider";
 
 const routes = [
   { path: "/", element: <WelcomePage /> },
@@ -42,11 +53,24 @@ const routes = [
 
 function App() {
   return (
-    <Routes>
-      {routes.map((route) => (
-        <Route key={route.path} path={route.path} element={route.element} />
-      ))}
-    </Routes>
+    <SpotifyProvider>
+      <Routes>
+        {routes.map((route) => (
+          <Route key={route.path} path={route.path} element={route.element} />
+        ))}
+        <Route path="/spotify" element={<MusicRoute />}>
+          <Route path="search" element={<SearchPage />} />
+          <Route path="queue" element={<QueuePage />} />
+          <Route path="library" element={<LibraryPage />} />
+          <Route path="playlists/:id" element={<PlaylistDetail />} />
+          <Route path="albums/:id" element={<AlbumDetail />} />
+          <Route path="artists/:id" element={<ArtistDetail />} />
+          <Route path="taste" element={<TastePage />} />
+          <Route path="discover" element={<DiscoverPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+        </Route>
+      </Routes>
+    </SpotifyProvider>
   );
 }
 
