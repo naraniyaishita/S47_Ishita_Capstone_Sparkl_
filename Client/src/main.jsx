@@ -8,7 +8,10 @@ import axios from "axios";
 
 axios.interceptors.request.use((config) => {
   const token = sessionStorage.getItem("token");
-  if (token) {
+  const serverUrl = import.meta.env.VITE_SERVER;
+  const isSparklRequest = serverUrl && config.url?.startsWith(serverUrl);
+
+  if (token && isSparklRequest) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
