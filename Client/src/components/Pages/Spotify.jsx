@@ -156,11 +156,12 @@ function Spotify() {
   const [isTopLoading, setIsTopLoading] = useState(false);
 
   const [isShuffle, setIsShuffle] = useState(false);
-  const [CurrentSong, setCurrentSong] = useState("");
+  const [currentTrack, setCurrentTrack] = useState(null);
 
   const [searchType, setSearchType] = useState("track");
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeDevice, setActiveDevice] = useState(null);
+  const [spotifyProfile, setSpotifyProfile] = useState(null);
 
   //setToken
 
@@ -256,6 +257,12 @@ function Spotify() {
     }
   }, [token]);
 
+  useEffect(() => {
+    if (!token) return undefined;
+    const intervalId = window.setInterval(() => refresh(true), 30_000);
+    return () => window.clearInterval(intervalId);
+  }, [token]);
+
   // Cheeking token validity
   const checkTokenValidity = async () => {
     try {
@@ -263,6 +270,7 @@ function Spotify() {
         "get",
         "https://api.spotify.com/v1/me"
       );
+      setSpotifyProfile(response.data);
       return response.status === 200;
     } catch (error) {
       console.error("Token is invalid or expired", error);
@@ -347,16 +355,17 @@ function Spotify() {
     let offset = 0;
     let hasMore = true;
     let songData = [];
+    const pageSize = 50;
 
     while (hasMore) {
       try {
         const response = await spotifyApiRequest(
           "get",
-          `https://api.spotify.com/v1/me/tracks?limit=20&offset=${offset}`,
+          `https://api.spotify.com/v1/me/tracks?limit=${pageSize}&offset=${offset}`,
         );
         songData = songData.concat(response.data.items);
-        offset += 20;
-        hasMore = response.data.next !== null;
+        offset += pageSize;
+        hasMore = Boolean(response.data.next);
       } catch (error) {
         console.error("Failed to fetch liked songs:", error);
         break;
@@ -368,6 +377,15 @@ function Spotify() {
 
   //Playbacks
 
+  const notifyPlaybackError = (error, action = "start playback") => {
+    const reason = error.response?.data?.error?.reason;
+    if (error.response?.status === 404 || reason === "NO_ACTIVE_DEVICE") {
+      toast.warning("No active Spotify player. Open Spotify on a device and start playback first.");
+      return;
+    }
+    toast.error(`Couldn't ${action}. ${error.response?.data?.error?.message || "Please try again."}`);
+  };
+
   //Pause
   const Pause = async () => {
     try {
@@ -376,6 +394,7 @@ function Spotify() {
         `https://api.spotify.com/v1/me/player/pause`,
         {}
       );
+      setIsPlaying(false);
     } catch (error) {
       console.error("Failed to pause", error);
     }
@@ -388,10 +407,13 @@ function Spotify() {
         `https://api.spotify.com/v1/me/player/play`,
         {}
       );
+      setIsPlaying(true);
     } catch (error) {
       console.error("Failed to play", error);
+      notifyPlaybackError(error);
     }
   };
+  const togglePlayback = () => (isPlaying ? Pause() : Play());
   const Next = async () => {
     try {
       await spotifyApiRequest(
@@ -419,12 +441,13 @@ function Spotify() {
   //Shuffle
   const Shuffle = async () => {
     try {
-      setIsShuffle(!isShuffle);
+      const nextShuffleState = !isShuffle;
       await spotifyApiRequest(
         "put",
-        `https://api.spotify.com/v1/me/player/shuffle?state=${isShuffle}`,
+        `https://api.spotify.com/v1/me/player/shuffle?state=${nextShuffleState}`,
         {}
       );
+      setIsShuffle(nextShuffleState);
     } catch (error) {
       console.error("Failed to shuffle", error);
     }
@@ -440,29 +463,15 @@ function Spotify() {
         `https://api.spotify.com/v1/me/player/play`,
         requestBody
       );
+      setIsPlaying(true);
+      State();
     } catch (error) {
       console.error(`Failed to play selected ${type}`, error);
-    }
-  };
-  //Current Song
-  const fetchCurrentSong = async () => {
-    try {
-      const response = await spotifyApiRequest(
-        "get",
-        "https://api.spotify.com/v1/me/player/currently-playing",
-      );
-
-      if (response.data && response.data.item) {
-        setCurrentSong(response.data.item.name);
-      } else {
-        setCurrentSong("No Song Playing");
-      }
-    } catch (error) {
-      console.error("Failed to fetch current song", error);
+      notifyPlaybackError(error, "play this item");
     }
   };
   //Devices
-  const checkDevices = async () => {
+  const checkDevices = async (silent = false) => {
     try {
       const response = await spotifyApiRequest(
         "get",
@@ -474,7 +483,7 @@ function Spotify() {
 
       if (activeDevice) {
         setActiveDevice(activeDevice.id);
-      } else {
+      } else if (!silent) {
         toast.error("No active devices found, Please Connect your device");
       }
     } catch (error) {
@@ -489,17 +498,18 @@ function Spotify() {
         "get",
         "https://api.spotify.com/v1/me/player"
       );
-      setIsPlaying(response.data.is_playing);
+      setIsPlaying(Boolean(response.data?.is_playing));
+      setIsShuffle(Boolean(response.data?.shuffle_state));
+      setCurrentTrack(response.data?.item || null);
     } catch (error) {
       console.error("Failed to get player state", error);
     }
   };
   //Refresh
-  const refresh = () => {
+  const refresh = (silent = false) => {
     checkTokenValidity();
     State();
-    fetchCurrentSong();
-    checkDevices();
+    checkDevices(silent);
   };
   // setInterval(refresh, 1000 * 60 * 2);
   //Logout
@@ -539,9 +549,30 @@ function Spotify() {
                 className="SpotifyLogo"
               />
             </h1>
-            <button onClick={logout} className="SpotifyLogoutButton">
-              Logout
-            </button>
+            <div className="SpotifyHeaderActions">
+              {spotifyProfile && (
+                <a
+                  className="SpotifyProfile"
+                  href={spotifyProfile.external_urls?.spotify || `https://open.spotify.com/user/${spotifyProfile.id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`Open ${spotifyProfile.display_name || "Spotify"} profile on Spotify`}
+                >
+                  {spotifyProfile.images?.[1]?.url || spotifyProfile.images?.[0]?.url ? (
+                    <img
+                      src={spotifyProfile.images?.[1]?.url || spotifyProfile.images?.[0]?.url}
+                      alt=""
+                    />
+                  ) : (
+                    <span>{(spotifyProfile.display_name || "S").charAt(0).toUpperCase()}</span>
+                  )}
+                  <span>{spotifyProfile.display_name || "Spotify profile"}</span>
+                </a>
+              )}
+              <button onClick={logout} className="SpotifyLogoutButton">
+                Logout
+              </button>
+            </div>
           </header>
           {/* Spotify Playback Buttons */}
           <div className="SpotifyButtons">
@@ -551,10 +582,23 @@ function Spotify() {
                 <TbRefresh /> Refresh
               </button>
 
-              <p className="CurrentSong">
-                <TbMusic />
-                {CurrentSong}
-              </p>
+              <div className="CurrentSong">
+                {currentTrack?.album?.images?.[2]?.url ? (
+                  <img
+                    className="CurrentSongCover"
+                    src={currentTrack.album.images[2].url}
+                    alt=""
+                  />
+                ) : (
+                  <TbMusic className="CurrentSongFallback" />
+                )}
+                <div className="CurrentSongDetails">
+                  <strong>{currentTrack?.name || "Nothing playing"}</strong>
+                  {currentTrack?.artists?.length > 0 && (
+                    <span>{currentTrack.artists.map((artist) => artist.name).join(", ")}</span>
+                  )}
+                </div>
+              </div>
             </div>
             <form onSubmit={searchItems} className="SpotifySearchBar">
               <select
@@ -579,11 +623,8 @@ function Spotify() {
                 {renderSearchResults()}
               </div>
             )}
-            <button onClick={Pause}>
-              <TbPlayerPauseFilled />
-            </button>
-            <button onClick={Play}>
-              <TbPlayerPlayFilled />
+            <button onClick={togglePlayback} aria-label={isPlaying ? "Pause" : "Play"} title={isPlaying ? "Pause" : "Play"}>
+              {isPlaying ? <TbPlayerPauseFilled /> : <TbPlayerPlayFilled />}
             </button>
             <button onClick={Next}>
               <TbPlayerTrackNextFilled />
@@ -591,16 +632,19 @@ function Spotify() {
             <button onClick={Previous}>
               <TbPlayerTrackPrevFilled />
             </button>
-            <button onClick={Shuffle}>
+            <button onClick={Shuffle} className={isShuffle ? "isActive" : ""} aria-label={`Shuffle ${isShuffle ? "on" : "off"}`} aria-pressed={isShuffle} title={`Shuffle ${isShuffle ? "on" : "off"}`}>
               <TbArrowsShuffle />
             </button>
           </div>
           <div className="SpotifyData">
             {/* Spotify Top Artist */}
             <div className="SpotifyTop">
-              <button onClick={topArtist} className="SpotifyGetButton">
-                Top Artist
-              </button>
+              <div className="SpotifySectionHeader">
+                <h2>Your Top Artists</h2>
+                <button onClick={topArtist} className="SpotifySectionRefresh" aria-label="Refresh top artists" title="Refresh top artists">
+                  <TbRefresh />
+                </button>
+              </div>
               {isTopLoading ? (
                 <div className="SpotifyLoading">Loading artists…</div>
               ) : (
@@ -608,18 +652,26 @@ function Spotify() {
               )}
             </div>
             <div className="SpotifyLiked">
-              <button onClick={getLikedSongs} className="SpotifyGetButton">
-                Get Liked Songs
-              </button>
+              <div className="SpotifySectionHeader">
+                <div>
+                  <h2>Liked Songs</h2>
+                  <span>{likedSongData.length} tracks</span>
+                </div>
+                <button onClick={getLikedSongs} className="SpotifySectionRefresh" aria-label="Refresh liked songs" title="Refresh liked songs">
+                  <TbRefresh />
+                </button>
+              </div>
               {isLikedLoading ? (
                 <div className="SpotifyLoading">Loading liked songs…</div>
               ) : (
                 <div className="LikedSongsContainer">
-                  {likedSongData.map((song, index) => (
-                    <div key={index} className="LikedSong">
+                  {likedSongData.map((song, index) => song.track && (
+                    <div key={song.track.id || index} className="LikedSong">
                       <button
                         style={{
-                          backgroundImage: `url(${song.track.album.images[2].url})`,
+                          backgroundImage: song.track.album?.images?.[2]?.url
+                            ? `url(${song.track.album.images[2].url})`
+                            : "none",
                         }}
                         onClick={() => playSelectedItem(song.track.uri)}
                         className="PlayButton"

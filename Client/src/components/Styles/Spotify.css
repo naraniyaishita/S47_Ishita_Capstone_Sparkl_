@@ -600,8 +600,7 @@
    LOADING STATES
 ============================================================================ */
 
-.SpotifyTop > div:first-of-type,
-.SpotifyLiked > div:first-of-type {
+.SpotifyLoading {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -619,11 +618,6 @@
     50% {
         opacity: 0.5;
     }
-}
-
-.SpotifyTop > div:first-of-type,
-.SpotifyLiked > div:first-of-type {
-    animation: pulse 1.5s ease-in-out infinite;
 }
 
 /* ============================================================================
@@ -691,6 +685,80 @@
     .SpotifyTop,
     .SpotifyLiked {
         padding: 1.5rem;
+    }
+}
+
+.SpotifyPlayer {
+    min-width: min(100%, 500px);
+    gap: 0.75rem;
+}
+
+.CurrentSong {
+    flex: 1 1 260px;
+    min-width: 0;
+    max-width: min(420px, 100%);
+    padding: 0.65rem 1rem 0.65rem 0.7rem;
+    border-radius: 18px;
+    gap: 0.75rem;
+    box-sizing: border-box;
+}
+
+.CurrentSongCover,
+.CurrentSongFallback {
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.CurrentSongFallback {
+    display: grid;
+    place-items: center;
+    color: var(--spotify-green);
+    font-size: 1.4rem;
+}
+
+.CurrentSongDetails {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 0.2rem;
+    line-height: 1.25;
+}
+
+.CurrentSongDetails strong,
+.CurrentSongDetails span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.CurrentSongDetails strong {
+    font-size: 0.95rem;
+}
+
+.CurrentSongDetails span {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.82rem;
+}
+
+.SpotifyButtons > button.isActive {
+    color: #071b0e;
+    background: linear-gradient(135deg, #1ed760, #6ce89a);
+    border-color: rgba(255, 255, 255, 0.55);
+}
+
+@media (max-width: 768px) {
+    .SpotifyPlayer {
+        min-width: 0;
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .CurrentSong {
+        flex: 1 1 100%;
+        max-width: none;
     }
 }
 
@@ -946,9 +1014,8 @@
     font-size: 0.95rem;
 }
 
-/* The old rule accidentally pulsed the entire liked-song list forever. */
-.SpotifyTop > div:first-of-type,
-.SpotifyLiked > div:first-of-type {
+/* Only loading messages receive loading-state styling; lists remain scrollable. */
+.SpotifyLoading {
     animation: none;
 }
 
@@ -997,5 +1064,126 @@
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+    }
+}
+
+/* Keep both data panels aligned and use one clear heading per section. */
+.SpotifyTop,
+.SpotifyLiked {
+    height: min(72vh, 760px);
+    min-height: 520px;
+    box-sizing: border-box;
+}
+
+.SpotifyTop::after,
+.SpotifyLiked::after {
+    display: none;
+}
+
+.SpotifyTop > div:last-child,
+.LikedSongsContainer {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+}
+
+.SpotifySectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 56px;
+    padding: 0.25rem 0.15rem 0.75rem;
+    border-bottom: 1px solid rgba(76, 66, 145, 0.12);
+    color: var(--spotify-dark-gray);
+}
+
+.SpotifySectionHeader h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+}
+
+.SpotifySectionHeader span {
+    display: inline-block;
+    margin-top: 0.25rem;
+    color: #777;
+    font-size: 0.85rem;
+}
+
+.SpotifySectionRefresh {
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(108, 92, 231, 0.18);
+    border-radius: 50%;
+    color: var(--primary-purple);
+    background: rgba(108, 92, 231, 0.08);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.SpotifySectionRefresh:hover {
+    background: rgba(108, 92, 231, 0.15);
+    transform: rotate(25deg);
+}
+
+@media (max-width: 768px) {
+    .SpotifyTop,
+    .SpotifyLiked {
+        height: min(70vh, 680px);
+        min-height: 460px;
+    }
+}
+
+.SpotifyHeaderActions {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.SpotifyProfile {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    max-width: 240px;
+    color: white;
+    text-decoration: none;
+    font-weight: 650;
+}
+
+.SpotifyProfile img,
+.SpotifyProfile > span:first-child {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.SpotifyProfile > span:first-child {
+    display: grid;
+    place-items: center;
+    background: var(--primary-purple);
+}
+
+.SpotifyProfile > span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.SpotifyProfile:hover {
+    color: #c7ffd8;
+}
+
+@media (max-width: 768px) {
+    .SpotifyHeaderActions {
+        justify-content: center;
+        flex-wrap: wrap;
     }
 }
